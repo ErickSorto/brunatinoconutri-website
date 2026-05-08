@@ -102,21 +102,21 @@ const reviews = [
   {
     name: "Paciente online",
     meta: "Rotina ocupada",
-    image: "/generated/reviews-chatgpt-latest/001-use-case-photorealistic-natural-asset-type-website-review-ca-web.png",
+    image: "/generated/reviews-chatgpt-latest/001-use-case-photorealistic-natural-asset-type-website-review-ca-web.webp",
     quote:
       "O plano ficou simples de seguir e eu finalmente entendi como adaptar a alimentacao ao meu dia.",
   },
   {
     name: "Brasileira nos EUA",
     meta: "Plano Diamond",
-    image: "/generated/reviews-chatgpt-latest/002-use-case-photorealistic-natural-asset-type-website-review-ca-web.png",
+    image: "/generated/reviews-chatgpt-latest/002-use-case-photorealistic-natural-asset-type-website-review-ca-web.webp",
     quote:
       "As substituicoes com produtos americanos deixaram tudo mais pratico, sem aquela sensacao de dieta impossivel.",
   },
   {
     name: "Paciente BT",
     meta: "Acompanhamento",
-    image: "/generated/reviews-chatgpt-latest-brazilian/003-brazilian-review-model-web.png",
+    image: "/generated/reviews-chatgpt-latest-brazilian/003-brazilian-review-model-web.webp",
     quote:
       "Foi acolhimento e organizacao. Eu sabia o que fazer na semana e quando pedir ajuste.",
   },
@@ -166,19 +166,19 @@ const sevenDayResults = [
     day: "Dia 1",
     title: "Direcao",
     text: "Plano claro, compras simples e primeira rotina sem improviso.",
-    art: "/generated/seven-day/day-cards/day-1-start-web.png",
+    art: "/generated/seven-day/day-cards/day-1-start-web.webp",
   },
   {
     day: "Dia 4",
     title: "Leveza",
     text: "Fome mais previsivel, energia melhor e menos vontade de desistir.",
-    art: "/generated/seven-day/day-cards/day-4-light-web.png",
+    art: "/generated/seven-day/day-cards/day-4-light-web.webp",
   },
   {
     day: "Dia 7",
     title: "Clareza",
     text: "Voce ja entende o caminho e sente resultado suficiente para continuar.",
-    art: "/generated/seven-day/day-cards/day-7-happy-web.png",
+    art: "/generated/seven-day/day-cards/day-7-happy-web.webp",
   },
 ];
 
@@ -224,19 +224,19 @@ const instagramPosts = [
   {
     title: "Bastidores da consultoria",
     label: "Atendimento online",
-    image: "/bruna-pdf/bruna-about-cutout.png",
+    image: "/bruna-pdf/bruna-about-cutout.webp",
     variant: "portrait-post",
   },
   {
     title: "Rotina possivel nos EUA",
     label: "Escolhas simples",
-    image: "/generated/bruna-gallery-social-accent-web.png",
+    image: "/generated/bruna-gallery-social-accent-web.webp",
     variant: "food-post",
   },
   {
     title: "Plano, app e suporte",
     label: "Consultoria BT",
-    image: "/bruna-pdf/bruna-hero-cutout.png",
+    image: "/bruna-pdf/bruna-hero-cutout.webp",
     variant: "support-post",
   },
 ];
@@ -344,7 +344,7 @@ export default function Home() {
         <div className="main-nav">
           <a href="#inicio" className="brand-mark" aria-label="Bruna Tinoco Nutri">
             <Image
-              src="/bruna-logo.png"
+              src="/bruna-logo.webp"
               alt="Bruna Tinoco Nutricao Integrativa"
               width={1120}
               height={295}
@@ -376,7 +376,7 @@ export default function Home() {
         <label className="drawer-backdrop" htmlFor="mobile-drawer" aria-hidden="true" />
         <aside className="mobile-drawer" aria-label="Menu mobile">
           <div className="drawer-top">
-            <Image src="/bruna-logo.png" alt="" width={1120} height={295} />
+            <Image src="/bruna-logo.webp" alt="" width={1120} height={295} />
             <label htmlFor="mobile-drawer" aria-label="Fechar menu">
               <span />
               <span />
@@ -405,7 +405,7 @@ export default function Home() {
 
       <section className="hero-section" id="inicio">
         <Image
-          src="/bruna-pdf/page-02-image-01-3e586cd55a6b.jpg"
+          src="/bruna-pdf/page-02-image-01-3e586cd55a6b.webp"
           alt=""
           fill
           sizes="100vw"
@@ -455,7 +455,7 @@ export default function Home() {
             </div>
             <div className="hero-portrait">
               <Image
-                src="/bruna-pdf/bruna-hero-grounded.png"
+                src="/bruna-pdf/bruna-hero-grounded.webp"
                 alt="Bruna Tinoco, nutricionista integrativa"
                 width={732}
                 height={1178}
@@ -636,14 +636,14 @@ export default function Home() {
       <section className="services-section">
         <div className="services-visual reveal">
           <Image
-            src="/bruna-pdf/page-01-image-02-c0c8dee922ce.png"
+            src="/bruna-pdf/page-01-image-02-c0c8dee922ce.webp"
             alt=""
             fill
             sizes="(max-width: 900px) 100vw, 42vw"
           />
           <div className="services-portrait">
             <Image
-              src="/bruna-pdf/bruna-about-cutout.png"
+              src="/bruna-pdf/bruna-about-cutout.webp"
               alt="Bruna Tinoco"
               width={430}
               height={618}
@@ -682,7 +682,7 @@ export default function Home() {
         </div>
         <div className="about-art">
           <Image
-            src="/generated/about/nutrition-food-headshot-provided-web.png"
+            src="/generated/about/nutrition-food-headshot-provided-web.webp"
             alt="Retrato editorial de nutricao integrativa com alimentos naturais"
             fill
             loading="eager"
@@ -747,7 +747,7 @@ export default function Home() {
 
       <section className="final-section" id="contato">
         <Image
-          src="/bruna-pdf/page-10-image-01-3e586cd55a6b.jpg"
+          src="/bruna-pdf/page-10-image-01-3e586cd55a6b.webp"
           alt=""
           fill
           sizes="100vw"
@@ -755,7 +755,7 @@ export default function Home() {
         />
         <div className="final-overlay" />
         <Image
-          src="/generated/bruna-footer-botanical-web.png"
+          src="/generated/bruna-footer-botanical-web.webp"
           alt=""
           fill
           sizes="100vw"
@@ -781,7 +781,7 @@ export default function Home() {
           <div className="footer-brand">
             <a href="#inicio" aria-label="Bruna Tinoco Nutri">
               <Image
-                src="/bruna-logo.png"
+                src="/bruna-logo.webp"
                 alt="Bruna Tinoco Nutricao Integrativa"
                 width={1120}
                 height={295}
