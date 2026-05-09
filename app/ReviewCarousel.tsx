@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 
 type Review = {
   name: string;
@@ -12,35 +15,37 @@ type ReviewCarouselProps = {
   starRatingAria: string;
 };
 
-const carouselScript = `
-(() => {
-  window.__btReviewCarouselTimers = window.__btReviewCarouselTimers || [];
-  window.__btReviewCarouselTimers.forEach((timer) => window.clearInterval(timer));
-  window.__btReviewCarouselTimers = [];
+export default function ReviewCarousel({
+  reviews,
+  starRatingAria,
+}: ReviewCarouselProps) {
+  const shellRef = useRef<HTMLDivElement>(null);
 
-  const carousels = document.querySelectorAll("[data-review-carousel]");
+  useEffect(() => {
+    const carousel = shellRef.current;
+    const track = carousel?.querySelector<HTMLElement>(".proof-review-grid");
+    const dots = Array.from(
+      carousel?.querySelectorAll<HTMLButtonElement>(".proof-carousel-dots button") ?? [],
+    );
 
-  carousels.forEach((carousel) => {
-    if (carousel.dataset.carouselReady === "true") {
+    if (!carousel || !track || dots.length < 2) {
       return;
     }
-
-    const track = carousel.querySelector(".proof-review-grid");
-    const dots = Array.from(carousel.querySelectorAll(".proof-carousel-dots button"));
-
-    if (!track || dots.length < 2) {
-      return;
-    }
-
-    carousel.dataset.carouselReady = "true";
 
     let frame = 0;
-
-    const cards = () => Array.from(track.querySelectorAll(".proof-review-card"));
+    let timer: number | undefined;
+    const dotHandlers: Array<() => void> = [];
+    const cards = () => Array.from(track.querySelectorAll<HTMLElement>(".proof-review-card"));
     const snapOffset = () => parseFloat(window.getComputedStyle(track).scrollPaddingLeft) || 0;
-    const currentIndex = () => Math.max(0, dots.findIndex((dot) => dot.classList.contains("active")));
+    const cardScrollLeft = (card: HTMLElement) =>
+      card.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+    const currentIndex = () =>
+      Math.max(
+        0,
+        dots.findIndex((dot) => dot.classList.contains("active")),
+      );
 
-    const setActive = (index, behavior = "smooth") => {
+    const setActive = (index: number, behavior: ScrollBehavior = "smooth") => {
       const items = cards();
       const next = (index + items.length) % items.length;
       const card = items[next];
@@ -50,7 +55,7 @@ const carouselScript = `
       }
 
       track.scrollTo({
-        left: card.offsetLeft - track.offsetLeft - snapOffset(),
+        left: cardScrollLeft(card) - snapOffset(),
         behavior,
       });
 
@@ -68,13 +73,12 @@ const carouselScript = `
 
     const syncFromScroll = () => {
       frame = 0;
-
       const items = cards();
       let closestIndex = 0;
       let closestDistance = Number.POSITIVE_INFINITY;
 
       items.forEach((card, index) => {
-        const distance = Math.abs(card.offsetLeft - track.offsetLeft - snapOffset() - track.scrollLeft);
+        const distance = Math.abs(cardScrollLeft(card) - snapOffset() - track.scrollLeft);
 
         if (distance < closestDistance) {
           closestDistance = distance;
@@ -94,32 +98,42 @@ const carouselScript = `
       });
     };
 
-    track.addEventListener("scroll", () => {
+    const handleScroll = () => {
       if (frame) {
         return;
       }
 
       frame = window.requestAnimationFrame(syncFromScroll);
-    }, { passive: true });
+    };
+
+    track.addEventListener("scroll", handleScroll, { passive: true });
 
     dots.forEach((dot, index) => {
-      dot.addEventListener("click", () => setActive(index));
+      const handler = () => setActive(index);
+      dotHandlers.push(handler);
+      dot.addEventListener("click", handler);
     });
 
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      const timer = window.setInterval(() => setActive(currentIndex() + 1), 4200);
-      window.__btReviewCarouselTimers.push(timer);
+      timer = window.setInterval(() => setActive(currentIndex() + 1), 4200);
     }
-  });
-})();
-`;
 
-export default function ReviewCarousel({
-  reviews,
-  starRatingAria,
-}: ReviewCarouselProps) {
+    return () => {
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      if (timer) {
+        window.clearInterval(timer);
+      }
+
+      track.removeEventListener("scroll", handleScroll);
+      dots.forEach((dot, index) => dot.removeEventListener("click", dotHandlers[index]));
+    };
+  }, [reviews.length]);
+
   return (
-    <div className="proof-review-shell" data-review-carousel>
+    <div className="proof-review-shell" data-review-carousel ref={shellRef}>
       <div className="proof-review-grid">
         {reviews.map((review, index) => (
           <article className="proof-review-card reveal" key={review.name}>
@@ -129,7 +143,7 @@ export default function ReviewCarousel({
                 alt=""
                 fill
                 loading={index === 0 ? "eager" : "lazy"}
-                sizes="(max-width: 620px) 82vw, 22vw"
+                sizes="(max-width: 620px) 82vw, (max-width: 980px) 44vw, 22vw"
               />
             </div>
             <div className="proof-review-top">
@@ -157,7 +171,6 @@ export default function ReviewCarousel({
           />
         ))}
       </div>
-      <script dangerouslySetInnerHTML={{ __html: carouselScript }} />
     </div>
   );
 }

@@ -27,10 +27,29 @@ export default function EmailOfferPopup({ copy }: { copy: EmailOfferCopy }) {
       return;
     }
 
-    const timer = window.setTimeout(() => setIsOpen(true), forceOpen ? 700 : 30000);
+    const timer = window.setTimeout(() => setIsOpen(true), forceOpen ? 1 : 30000);
 
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.classList.add("offer-scroll-lock");
+
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      document.body.classList.remove("offer-scroll-lock");
+      document.body.style.paddingRight = previousPaddingRight;
+    };
+  }, [isOpen]);
 
   const close = () => {
     window.sessionStorage.setItem(DISMISSED_KEY, "true");

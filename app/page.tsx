@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Image from "next/image";
+import BookingScheduler from "./BookingScheduler";
 import EmailOfferPopup from "./EmailOfferPopup";
 import ReviewCarousel from "./ReviewCarousel";
 import ViewportSequenceTrigger from "./ViewportSequenceTrigger";
@@ -46,10 +47,10 @@ const translations = {
     openMenuAria: "Abrir menu",
     closeMenuAria: "Fechar menu",
     whatsappAria: "Contato pelo WhatsApp",
-    announcement: "15% off para quem agenda a call gratuita nesta semana",
-    navCta: "Call gratuita",
+    announcement: "15% off para quem agenda a consulta gratuita de 1 hora",
+    navCta: "Consulta gratuita",
     drawerLanguage: "Idioma",
-    drawerCta: "Agendar call gratuita",
+    drawerCta: "Agendar consulta gratuita",
     drawerSocials: "Redes sociais",
     starRatingAria: "5 de 5 estrelas",
     navLinks: [
@@ -66,7 +67,7 @@ const translations = {
       accent: "Nutri",
       text:
         "Se voce vive nos EUA, compra em mercados americanos e quer emagrecer sem dieta engessada, a Experiencia BT traduz sua rotina em plano, app e ajustes proximos.",
-      primary: "Agendar call gratuita",
+      primary: "Agendar consulta gratuita",
       instagram: "Instagram",
       whatsapp: "WhatsApp",
       portraitAlt: "Bruna Tinoco, nutricionista integrativa",
@@ -88,6 +89,17 @@ const translations = {
       kicker: "Prova social",
       title: "Clareza para seguir.",
       ratingText: "Feedback de pacientes da consultoria online",
+    },
+    videoProof: {
+      kicker: "Prova em video",
+      title: "Mercado dos EUA sem travar.",
+      text:
+        "Voce nao precisa adivinhar produtos, rotulos e substituicoes. A consultoria traduz sua rotina americana em escolhas simples.",
+      stats: ["Produtos certos", "Compras simples", "Plano em portugues"],
+      primary: "Agendar consulta gratuita",
+      secondary: "Ver reel",
+      videoAria: "Reel de Bruna Tinoco sobre compras e rotina nos EUA",
+      poster: "/instagram/bruna-video-thumbnail-pt-ai.webp",
     },
     reviews: [
       {
@@ -259,32 +271,50 @@ const translations = {
       alt: "Retrato editorial de nutricao integrativa com alimentos naturais",
     },
     instagramStats: [
-      { value: "29.4K", label: "seguidores" },
+      { value: "29.3K", label: "seguidores" },
       { value: "1.4K", label: "posts" },
     ],
     instagramPosts: [
       {
-        title: "Trata a causa",
-        label: "Casos reais",
-        image: "/generated/bruna-gallery-social-accent-web.webp",
+        title: "Como funciona",
+        label: "Acompanhamento",
+        image: "/instagram/bruna-DN8yC6piSg6.webp",
         variant: "feature-post",
       },
       {
-        title: "Rotina BT",
-        label: "Nutri integrativa",
-        image: "/bruna-pdf/bruna-about-cutout.webp",
+        title: "Brasileiras nos EUA",
+        label: "Consultoria online",
+        image: "/instagram/bruna-DBub_vIOCJj.webp",
         variant: "portrait-post",
       },
       {
-        title: "Metodo e plano",
-        label: "Call gratuita",
-        image: "/bruna-pdf/bruna-hero-grounded.webp",
+        title: "Resultado real",
+        label: "Evolucao",
+        image: "/instagram/bruna-DXSDviKiT2A.webp",
+        variant: "story-post",
+      },
+      {
+        title: "Produtos da nutri",
+        label: "Mercado americano",
+        image: "/instagram/bruna-DWPUGATCf48.webp",
+        variant: "story-post",
+      },
+      {
+        title: "Metodo sem depender de animo",
+        label: "Constancia",
+        image: "/instagram/bruna-DUYWdDeGDY6.webp",
+        variant: "portrait-post",
+      },
+      {
+        title: "Saude intestinal",
+        label: "Causa, nao sintoma",
+        image: "/instagram/bruna-DUT6B6ElBMC.webp",
         variant: "story-post",
       },
     ],
     gallery: {
       kicker: "Instagram da Bruna",
-      title: "Conteudo real.",
+      title: "Vida real.",
       text:
         "Posts sobre metodo, mercado americano e rotina possivel para voce se ver no processo.",
       statAria: "Numeros publicos do Instagram",
@@ -292,40 +322,45 @@ const translations = {
       button: "Ver Instagram",
     },
     schedule: {
-      kicker: "Call gratuita",
-      title: "Agende sua call.",
+      kicker: "Consulta gratuita",
+      title: "Agende 1 hora gratuita",
       text:
-        "Em 15 minutos, voce entende se a consultoria cabe no seu tempo, investimento e rotina alimentar nos EUA.",
+        "Escolha um horario para entender seu plano e proximos passos.",
       perks: [
-        "Veja qual plano combina com sua fase.",
+        "Uma hora para mapear sua rotina e seus objetivos.",
         "Tire duvidas sobre tempo, custo e flexibilidade.",
-        "Ganhe 15% off se iniciar depois da call.",
+        "Ganhe 15% off se iniciar depois da consulta.",
       ],
-      panelKicker: "Agenda preview",
-      panelTitle: "Dia e horario",
-      panelText: "Selecione uma janela para a call gratuita. A confirmacao pode seguir por Instagram ou WhatsApp.",
+      panelKicker: "Consulta gratuita",
+      panelTitle: "Escolha seu horario",
+      panelText: "Selecione dia e hora. A confirmacao pode seguir por WhatsApp ou Instagram.",
       calendarAria: "Calendario de maio de 2026",
       month: "Maio 2026",
       prevMonth: "Mes anterior",
       nextMonth: "Proximo mes",
-      weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+      weekdays: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
       selectedPrefix: "Selecionado",
       selectedDate: "Sexta, 22 de maio",
       dateLabel: "Data",
       timeLabel: "Horario",
       serviceLabel: "Formato",
-      service: "Call gratuita BT",
-      duration: "15 min",
-      submit: "Agendar call gratuita",
+      service: "Consulta gratuita BT",
+      duration: "1 hora",
+      submit: "Agendar 1h gratis",
       secondary: "Prefiro falar no Instagram",
-      times: ["09:30", "11:00", "12:30", "16:30", "18:00", "19:00"],
-      timezone: "Horarios em EST para brasileiras nos EUA",
+      times: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"],
+      timezone: "Segunda a sexta, 8h as 18h EST",
+      chooseDate: "Escolher data",
+      chooseTime: "Escolher horario",
+      closePicker: "Fechar seletor",
+      dateSheetTitle: "Escolha a data",
+      timeSheetTitle: "Escolha o horario",
     },
     offerModal: {
-      kicker: "Oferta da call gratuita",
+      kicker: "Oferta da consulta gratuita",
       title: "Desbloqueie 15% off.",
       text:
-        "Receba o lembrete da call e o desconto preview para iniciar sua consultoria com mais clareza.",
+        "Receba o lembrete da consulta e o desconto preview para iniciar sua consultoria com mais clareza.",
       placeholder: "seuemail@email.com",
       button: "Quero 15% off",
       success: "Pronto. Desconto reservado para a preview.",
@@ -334,8 +369,8 @@ const translations = {
     },
     final: {
       kicker: "@brunatinoconutri",
-      title: "Seu primeiro passo e a call.",
-      cta: "Agendar call gratuita",
+      title: "Seu primeiro passo e a consulta.",
+      cta: "Agendar consulta gratuita",
     },
     footer: {
       brandText:
@@ -384,10 +419,10 @@ const translations = {
     openMenuAria: "Open menu",
     closeMenuAria: "Close menu",
     whatsappAria: "Contact on WhatsApp",
-    announcement: "15% off when you book a free call this week",
-    navCta: "Free call",
+    announcement: "15% off when you book your free 1-hour consultation",
+    navCta: "Free consult",
     drawerLanguage: "Language",
-    drawerCta: "Book free call",
+    drawerCta: "Book free consultation",
     drawerSocials: "Social media",
     starRatingAria: "5 out of 5 stars",
     navLinks: [
@@ -404,7 +439,7 @@ const translations = {
       accent: "Nutri",
       text:
         "If you live in the U.S., shop in American stores, and want weight loss without a rigid diet, the BT Experience turns your real routine into a plan, app, and close adjustments.",
-      primary: "Book a free call",
+      primary: "Book a free consultation",
       instagram: "Instagram",
       whatsapp: "WhatsApp",
       portraitAlt: "Bruna Tinoco, integrative nutritionist",
@@ -426,6 +461,17 @@ const translations = {
       kicker: "Social proof",
       title: "Clarity you can follow.",
       ratingText: "Feedback from online coaching clients",
+    },
+    videoProof: {
+      kicker: "Video proof",
+      title: "U.S. groceries made clear.",
+      text:
+        "You do not have to guess products, labels, or substitutions. The coaching turns your U.S. routine into simple choices.",
+      stats: ["Right products", "Simple shopping", "Portuguese guidance"],
+      primary: "Book a free consultation",
+      secondary: "View Reel",
+      videoAria: "Bruna Tinoco Reel about grocery shopping and routine in the U.S.",
+      poster: "/instagram/bruna-video-thumbnail-en-ai.webp",
     },
     reviews: [
       {
@@ -597,32 +643,50 @@ const translations = {
       alt: "Editorial portrait for integrative nutrition with natural foods",
     },
     instagramStats: [
-      { value: "29.4K", label: "followers" },
+      { value: "29.3K", label: "followers" },
       { value: "1.4K", label: "posts" },
     ],
     instagramPosts: [
       {
-        title: "Treats the cause",
-        label: "Real cases",
-        image: "/generated/bruna-gallery-social-accent-web.webp",
+        title: "How it works",
+        label: "Coaching",
+        image: "/instagram/bruna-DN8yC6piSg6.webp",
         variant: "feature-post",
       },
       {
-        title: "BT routine",
-        label: "Integrative nutrition",
-        image: "/bruna-pdf/bruna-about-cutout.webp",
+        title: "Brazilian women in the U.S.",
+        label: "Online coaching",
+        image: "/instagram/bruna-DBub_vIOCJj.webp",
         variant: "portrait-post",
       },
       {
-        title: "Method and plan",
-        label: "Free call",
-        image: "/bruna-pdf/bruna-hero-grounded.webp",
+        title: "Real progress",
+        label: "Results",
+        image: "/instagram/bruna-DXSDviKiT2A.webp",
+        variant: "story-post",
+      },
+      {
+        title: "Nutri-approved products",
+        label: "U.S. groceries",
+        image: "/instagram/bruna-DWPUGATCf48.webp",
+        variant: "story-post",
+      },
+      {
+        title: "A method beyond motivation",
+        label: "Consistency",
+        image: "/instagram/bruna-DUYWdDeGDY6.webp",
+        variant: "portrait-post",
+      },
+      {
+        title: "Gut health",
+        label: "Cause, not symptoms",
+        image: "/instagram/bruna-DUT6B6ElBMC.webp",
         variant: "story-post",
       },
     ],
     gallery: {
       kicker: "Bruna's Instagram",
-      title: "Real content.",
+      title: "Real life.",
       text:
         "Posts about the method, American grocery reality, and a routine you can actually see yourself following.",
       statAria: "Public Instagram numbers",
@@ -630,40 +694,45 @@ const translations = {
       button: "View Instagram",
     },
     schedule: {
-      kicker: "Free call",
-      title: "Book your free call.",
+      kicker: "Free consultation",
+      title: "Book 1 free hour",
       text:
-        "In 15 minutes, you see whether the coaching fits your time, budget, and food routine in the U.S.",
+        "Choose a time to understand your plan and next steps.",
       perks: [
-        "See which plan fits your current season.",
+        "One hour to map your routine and goals.",
         "Ask about time, cost, and flexibility.",
-        "Unlock 15% off if you start after the call.",
+        "Unlock 15% off if you start after the consultation.",
       ],
-      panelKicker: "Schedule preview",
-      panelTitle: "Day and time",
-      panelText: "Select a window for the free call. Confirmation can continue through Instagram or WhatsApp.",
+      panelKicker: "Free consultation",
+      panelTitle: "Choose your time",
+      panelText: "Select a day and hour. Confirmation can continue through WhatsApp or Instagram.",
       calendarAria: "May 2026 calendar",
       month: "May 2026",
       prevMonth: "Previous month",
       nextMonth: "Next month",
-      weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+      weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
       selectedPrefix: "Selected",
       selectedDate: "Friday, May 22",
       dateLabel: "Date",
       timeLabel: "Time",
       serviceLabel: "Format",
-      service: "Free BT call",
-      duration: "15 min",
-      submit: "Book a free call",
+      service: "Free BT consultation",
+      duration: "1 hour",
+      submit: "Book free hour",
       secondary: "I prefer Instagram",
-      times: ["09:30", "11:00", "12:30", "16:30", "18:00", "19:00"],
-      timezone: "Times shown in EST for Brazilian women in the U.S.",
+      times: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"],
+      timezone: "Monday to Friday, 8 AM to 6 PM EST",
+      chooseDate: "Choose date",
+      chooseTime: "Choose time",
+      closePicker: "Close picker",
+      dateSheetTitle: "Choose the date",
+      timeSheetTitle: "Choose the time",
     },
     offerModal: {
-      kicker: "Free-call offer",
+      kicker: "Free consultation offer",
       title: "Unlock 15% off.",
       text:
-        "Get the call reminder and preview discount so you can start with more clarity.",
+        "Get the consultation reminder and preview discount so you can start with more clarity.",
       placeholder: "you@email.com",
       button: "Get 15% off",
       success: "Done. Your preview discount is reserved.",
@@ -672,8 +741,8 @@ const translations = {
     },
     final: {
       kicker: "@brunatinoconutri",
-      title: "Your first step is the call.",
-      cta: "Book a free call",
+      title: "Your first step is the consultation.",
+      cta: "Book free consultation",
     },
     footer: {
       brandText:
@@ -759,35 +828,35 @@ const calendarRows = [
     { label: "5", state: "muted" },
     { label: "6", state: "muted" },
     { label: "7", state: "muted" },
-    { label: "8", state: "today" },
-    { label: "9" },
+    { label: "8", state: "muted" },
+    { label: "9", state: "muted" },
   ],
   [
-    { label: "10" },
+    { label: "10", state: "muted" },
     { label: "11" },
     { label: "12" },
     { label: "13" },
     { label: "14" },
     { label: "15" },
-    { label: "16" },
+    { label: "16", state: "muted" },
   ],
   [
-    { label: "17" },
+    { label: "17", state: "muted" },
     { label: "18" },
     { label: "19" },
     { label: "20" },
     { label: "21" },
     { label: "22", state: "selected" },
-    { label: "23" },
+    { label: "23", state: "muted" },
   ],
   [
-    { label: "24" },
+    { label: "24", state: "muted" },
     { label: "25" },
     { label: "26" },
     { label: "27" },
     { label: "28" },
     { label: "29" },
-    { label: "30" },
+    { label: "30", state: "muted" },
   ],
   [
     { label: "31", state: "muted" },
@@ -1073,6 +1142,46 @@ export default async function Home({
         <ReviewCarousel reviews={t.reviews} starRatingAria={t.starRatingAria} />
       </section>
 
+      <section className="video-proof-section" id="video-prova">
+        <div className="video-proof-copy reveal">
+          <p className="section-kicker">{t.videoProof.kicker}</p>
+          <h2>{t.videoProof.title}</h2>
+          <p>{t.videoProof.text}</p>
+          <div className="video-proof-stats">
+            {t.videoProof.stats.map((stat) => (
+              <span key={stat}>
+                <MiniIcon name="trend" />
+                {stat}
+              </span>
+            ))}
+          </div>
+          <div className="video-proof-actions">
+            <a className="primary-link" href="#agendar">
+              {t.videoProof.primary}
+            </a>
+            <a
+              className="text-link"
+              href="https://www.instagram.com/p/DXE4thVEcAF/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t.videoProof.secondary}
+            </a>
+          </div>
+        </div>
+        <div className="video-proof-frame reveal">
+          <video
+            aria-label={t.videoProof.videoAria}
+            controls
+            playsInline
+            poster={t.videoProof.poster}
+            preload="metadata"
+          >
+            <source src="/instagram/bruna-proof-us-market-hq.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </section>
+
       <section className="seven-day-section" id="resultados">
         <ViewportSequenceTrigger selector=".growth-story" />
         <div className="growth-story reveal" aria-label={t.sevenDayAria}>
@@ -1213,7 +1322,6 @@ export default async function Home({
             alt={t.about.alt}
             fill
             loading="eager"
-            quality={90}
             sizes="(max-width: 900px) 100vw, 48vw"
           />
         </div>
@@ -1257,8 +1365,8 @@ export default async function Home({
                   src={post.image}
                   alt=""
                   fill
-                  loading="eager"
-                  sizes="(max-width: 900px) 76vw, 24vw"
+                  loading="lazy"
+                  sizes="(max-width: 620px) 68vw, (max-width: 980px) 31vw, 17vw"
                 />
               </span>
               <span className="post-meta">
@@ -1285,105 +1393,7 @@ export default async function Home({
           </div>
         </div>
 
-        <form className="booking-panel reveal">
-          <div className="booking-panel-head">
-            <span>{t.schedule.panelKicker}</span>
-            <h2>{t.schedule.panelTitle}</h2>
-            <p>{t.schedule.panelText}</p>
-          </div>
-
-          <div className="booking-selector">
-            <div className="calendar-card" aria-label={t.schedule.calendarAria}>
-              <div className="calendar-title">
-                <span>
-                  <MiniIcon name="calendar" />
-                  {t.schedule.dateLabel}
-                </span>
-              </div>
-              <div className="calendar-month">
-                <button type="button" aria-label={t.schedule.prevMonth}>
-                  ‹
-                </button>
-                <strong>{t.schedule.month}</strong>
-                <button type="button" aria-label={t.schedule.nextMonth}>
-                  ›
-                </button>
-              </div>
-              <div className="calendar-grid">
-                {t.schedule.weekdays.map((day) => (
-                  <span className="calendar-weekday" key={day}>
-                    {day}
-                  </span>
-                ))}
-                {calendarRows.flat().map((day, index) => {
-                  const state = "state" in day ? day.state : undefined;
-
-                  return (
-                    <button
-                      className={[
-                        "calendar-day",
-                        state === "muted" ? "is-muted" : "",
-                        state === "today" ? "is-today" : "",
-                        state === "selected" ? "is-selected" : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                      key={`${day.label}-${index}`}
-                      type="button"
-                    >
-                      {day.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="selected-date">
-                <span>{t.schedule.selectedPrefix}</span>
-                <strong>{t.schedule.selectedDate}</strong>
-              </p>
-            </div>
-
-            <div className="schedule-side">
-              <div className="service-card">
-                <span>
-                  <MiniIcon name="check" />
-                  {t.schedule.serviceLabel}
-                </span>
-                <div>
-                  <strong>{t.schedule.service}</strong>
-                  <em>{t.schedule.duration}</em>
-                </div>
-              </div>
-
-              <div className="time-card">
-                <span>
-                  <MiniIcon name="clock" />
-                  {t.schedule.timeLabel}
-                </span>
-                <div className="booking-slots" aria-label={t.schedule.timeLabel}>
-                  {t.schedule.times.map((time, index) => (
-                    <button className={index === 3 ? "is-selected" : ""} type="button" key={time}>
-                      {time}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="booking-actions">
-                <button className="booking-submit" type="button">
-                  {t.schedule.submit}
-                </button>
-                <a
-                  href="https://www.instagram.com/brunatinoconutri/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t.schedule.secondary}
-                </a>
-              </div>
-              <p className="booking-note">{t.schedule.timezone}</p>
-            </div>
-          </div>
-        </form>
+        <BookingScheduler calendarRows={calendarRows} schedule={t.schedule} />
       </section>
 
       <section className="final-section" id="contato">
