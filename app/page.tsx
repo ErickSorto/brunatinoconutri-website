@@ -6,7 +6,11 @@ import EmailOfferPopup from "./EmailOfferPopup";
 import ReviewCarousel from "./ReviewCarousel";
 import ViewportSequenceTrigger from "./ViewportSequenceTrigger";
 
-const whatsappLink = "#contato";
+const whatsappPhone = "5522999595715";
+const whatsappMessages: Record<Lang, string> = {
+  pt: "Ola, tenho interesse na consultoria nutricional da Bruna Tinoco.",
+  en: "Hi, I am interested in Bruna Tinoco's nutrition coaching.",
+};
 
 const socialLinks = [
   {
@@ -23,13 +27,17 @@ const socialLinks = [
   },
   {
     label: "YouTube",
-    href: "https://www.youtube.com/@brunatinoconutri",
+    href: "https://www.youtube.com/@brunatinoco248/videos",
     icon: "/social-icons/youtube-white.svg",
     iconDark: "/social-icons/youtube-green.svg",
   },
 ];
 
 type Lang = "pt" | "en";
+
+function getWhatsappLink(lang: Lang) {
+  return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(whatsappMessages[lang])}`;
+}
 
 const translations = {
   pt: {
@@ -55,11 +63,12 @@ const translations = {
     starRatingAria: "5 de 5 estrelas",
     navLinks: [
       { label: "Inicio", href: "#inicio" },
+      { label: "Avaliacoes", href: "#avaliacoes" },
+      { label: "Video", href: "#video-prova" },
+      { label: "7 dias", href: "#resultados" },
       { label: "Experiencia", href: "#experiencia" },
       { label: "Planos", href: "#planos" },
-      { label: "Avaliacoes", href: "#avaliacoes" },
       { label: "Galeria", href: "#galeria" },
-      { label: "Contato", href: "#contato" },
     ],
     hero: {
       kicker: "Consultoria nutricional online",
@@ -398,7 +407,7 @@ const translations = {
           links: [
             { label: "Questionario otimizado", href: "#experiencia" },
             { label: "Plano individual", href: "#planos" },
-            { label: "Suporte WhatsApp", href: "#contato" },
+            { label: "Suporte WhatsApp", href: "whatsapp" },
           ],
         },
       ],
@@ -427,11 +436,12 @@ const translations = {
     starRatingAria: "5 out of 5 stars",
     navLinks: [
       { label: "Home", href: "#inicio" },
+      { label: "Reviews", href: "#avaliacoes" },
+      { label: "Video", href: "#video-prova" },
+      { label: "7 days", href: "#resultados" },
       { label: "Experience", href: "#experiencia" },
       { label: "Plans", href: "#planos" },
-      { label: "Reviews", href: "#avaliacoes" },
       { label: "Gallery", href: "#galeria" },
-      { label: "Contact", href: "#contato" },
     ],
     hero: {
       kicker: "Online nutrition coaching",
@@ -769,7 +779,7 @@ const translations = {
           links: [
             { label: "Optimized questionnaire", href: "#experiencia" },
             { label: "Personal plan", href: "#planos" },
-            { label: "WhatsApp support", href: "#contato" },
+            { label: "WhatsApp support", href: "whatsapp" },
           ],
         },
       ],
@@ -921,7 +931,12 @@ function LanguageToggle({ compact = false, lang }: { compact?: boolean; lang: La
     >
       <span className="language-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false">
-          <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 1.8c1.05 1.18 1.86 2.45 2.34 3.72H9.66C10.14 7.25 10.95 5.98 12 4.8Zm-4.2.95a12.6 12.6 0 0 0-1.92 2.77H3.8A7.3 7.3 0 0 1 7.8 5.75ZM3.23 10.3h2.04a11.2 11.2 0 0 0 0 3.4H3.23a7.33 7.33 0 0 1 0-3.4Zm.57 5.18h2.08a12.6 12.6 0 0 0 1.92 2.77 7.3 7.3 0 0 1-4-2.77Zm8.2 3.72c-1.05-1.18-1.86-2.45-2.34-3.72h4.68c-.48 1.27-1.29 2.54-2.34 3.72Zm2.93-5.5H9.07a9.3 9.3 0 0 1 0-3.4h5.86a9.3 9.3 0 0 1 0 3.4Zm1.27 4.55a12.6 12.6 0 0 0 1.92-2.77h2.08a7.3 7.3 0 0 1-4 2.77Zm4.57-4.55h-2.04a11.2 11.2 0 0 0 0-3.4h2.04a7.33 7.33 0 0 1 0 3.4Zm-2.65-5.18a12.6 12.6 0 0 0-1.92-2.77 7.3 7.3 0 0 1 4 2.77h-2.08Z" />
+          <path d="m5 8 6 6" />
+          <path d="m4 14 6-6 2-3" />
+          <path d="M2 5h12" />
+          <path d="M7 2h1" />
+          <path d="m22 22-5-10-5 10" />
+          <path d="M14 18h6" />
         </svg>
       </span>
       <a href="?lang=pt#inicio" aria-current={lang === "pt" ? "true" : undefined}>
@@ -962,6 +977,7 @@ export default async function Home({
 }) {
   const lang = resolveLang(searchParams ? await searchParams : undefined);
   const t = translations[lang];
+  const whatsappLink = getWhatsappLink(lang);
 
   return (
     <main className="site-shell">
@@ -973,7 +989,13 @@ export default async function Home({
       <header className="site-header">
         <div className="announcement-bar">
           <div className="announcement-left">
-            <a className="announcement-whatsapp" href={whatsappLink} aria-label={t.whatsappAria}>
+            <a
+              className="announcement-whatsapp"
+              href={whatsappLink}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={t.whatsappAria}
+            >
               <img src="/social-icons/whatsapp-white.svg" alt="" width="16" height="16" />
               <span>WhatsApp</span>
             </a>
@@ -1074,7 +1096,12 @@ export default async function Home({
               <a className="primary-link" href="#agendar">
                 {t.hero.primary}
               </a>
-              <a className="secondary-link hero-whatsapp-link" href={whatsappLink}>
+              <a
+                className="secondary-link hero-whatsapp-link"
+                href={whatsappLink}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <img src="/social-icons/whatsapp-white.svg" alt="" width="16" height="16" />
                 <span>{t.hero.whatsapp}</span>
               </a>
@@ -1445,7 +1472,12 @@ export default async function Home({
               <nav aria-label={column.title} key={column.title}>
                 <h2>{column.title}</h2>
                 {column.links.map((link) => (
-                  <a href={link.href} key={link.label}>
+                  <a
+                    href={link.href === "whatsapp" ? whatsappLink : link.href}
+                    key={link.label}
+                    target={link.href === "whatsapp" ? "_blank" : undefined}
+                    rel={link.href === "whatsapp" ? "noreferrer" : undefined}
+                  >
                     {link.label}
                   </a>
                 ))}
@@ -1457,7 +1489,7 @@ export default async function Home({
             <p className="footer-label">{t.footer.contactLabel}</p>
             <h2>{t.footer.contactTitle}</h2>
             <div className="footer-contact-actions">
-              <a className="footer-cta whatsapp" href={whatsappLink}>
+              <a className="footer-cta whatsapp" href={whatsappLink} target="_blank" rel="noreferrer">
                 <img src="/social-icons/whatsapp-white.svg" alt="" width="17" height="17" />
                 WhatsApp
               </a>

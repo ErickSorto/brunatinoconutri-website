@@ -329,6 +329,7 @@ export default function BookingScheduler({
         </div>
         <div className="booking-actions">
           <button className="booking-submit" type="submit">
+            <MiniIcon name="calendar" />
             {schedule.submit}
           </button>
         </div>
@@ -385,6 +386,7 @@ export default function BookingScheduler({
 
         <div className="booking-actions">
           <button className="booking-submit" type="submit">
+            <MiniIcon name="calendar" />
             {schedule.submit}
           </button>
           <a href="https://www.instagram.com/brunatinoconutri/" target="_blank" rel="noreferrer">
