@@ -29,7 +29,7 @@ export default function ViewportSequenceTrigger({
     const checkVisibility = () => {
       const rect = target.getBoundingClientRect();
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const visible = rect.top < viewportHeight * 0.78 && rect.bottom > viewportHeight * 0.18;
+      const visible = rect.top < viewportHeight * 0.64 && rect.bottom > viewportHeight * 0.28;
 
       if (visible) {
         start();
@@ -43,7 +43,7 @@ export default function ViewportSequenceTrigger({
           observer.disconnect();
         }
       },
-      { rootMargin: "-12% 0px -18% 0px", threshold: 0.12 },
+      { rootMargin: "-24% 0px -28% 0px", threshold: 0.16 },
     );
 
     observer.observe(target);

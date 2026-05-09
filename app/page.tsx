@@ -1,5 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
+import type { Metadata } from "next";
 import Image from "next/image";
+import EmailOfferPopup from "./EmailOfferPopup";
+import ReviewCarousel from "./ReviewCarousel";
 import ViewportSequenceTrigger from "./ViewportSequenceTrigger";
 
 const whatsappLink = "#contato";
@@ -25,162 +28,693 @@ const socialLinks = [
   },
 ];
 
-const navLinks = [
-  { label: "Inicio", href: "#inicio" },
-  { label: "Experiencia", href: "#experiencia" },
-  { label: "Planos", href: "#planos" },
-  { label: "Avaliacoes", href: "#avaliacoes" },
-  { label: "Galeria", href: "#galeria" },
-  { label: "Contato", href: "#contato" },
-];
+type Lang = "pt" | "en";
 
-const plans = [
-  {
-    name: "Gold",
-    duration: "03 meses",
-    rhythm: "Trimestral",
-    brl: "R$ 2.000",
-    usd: "$375",
-    note: "Para organizar rotina, escolhas e constancia com direcao clara.",
-    features: [
-      "Plano alimentar individualizado",
-      "Suplementacao orientada",
-      "Aplicativo do paciente",
-      "Suporte via WhatsApp",
+const translations = {
+  pt: {
+    htmlLang: "pt-BR",
+    metadata: {
+      title: "Bruna Tinoco Nutri | Consultoria Nutricional",
+      description:
+        "Consultoria nutricional online para brasileiras que vivem nos EUA e desejam emagrecer com saude.",
+    },
+    logoAlt: "Bruna Tinoco Nutricao Integrativa",
+    socialAria: "Redes sociais",
+    languageAria: "Idioma",
+    primaryNavAria: "Navegacao principal",
+    mobileMenuAria: "Menu mobile",
+    openMenuAria: "Abrir menu",
+    closeMenuAria: "Fechar menu",
+    whatsappAria: "Contato pelo WhatsApp",
+    announcement: "15% off para quem agenda a call gratuita nesta semana",
+    navCta: "Call gratuita",
+    drawerLanguage: "Idioma",
+    drawerCta: "Agendar call gratuita",
+    drawerSocials: "Redes sociais",
+    starRatingAria: "5 de 5 estrelas",
+    navLinks: [
+      { label: "Inicio", href: "#inicio" },
+      { label: "Experiencia", href: "#experiencia" },
+      { label: "Planos", href: "#planos" },
+      { label: "Avaliacoes", href: "#avaliacoes" },
+      { label: "Galeria", href: "#galeria" },
+      { label: "Contato", href: "#contato" },
     ],
-  },
-  {
-    name: "Diamond",
-    duration: "06 meses",
-    rhythm: "Semestral",
-    brl: "R$ 3.200",
-    usd: "$600",
-    note: "Para quem quer mais tempo de ajuste, suporte e acompanhamento.",
-    featured: true,
-    features: [
-      "Tudo do Gold",
-      "Rastreamento metabolico",
-      "Check-up quinzenal",
-      "Ajustes de plano e rotina",
+    hero: {
+      kicker: "Consultoria nutricional online",
+      title: "Bruna Tinoco",
+      accent: "Nutri",
+      text:
+        "Se voce vive nos EUA, compra em mercados americanos e quer emagrecer sem dieta engessada, a Experiencia BT traduz sua rotina em plano, app e ajustes proximos.",
+      primary: "Agendar call gratuita",
+      instagram: "Instagram",
+      whatsapp: "WhatsApp",
+      portraitAlt: "Bruna Tinoco, nutricionista integrativa",
+      stats: {
+        plan: "Plano alimentar",
+        percent: "83%",
+        adherence: "Adesao semanal",
+        checkin: "Proximo check-in",
+        weekday: "Quinta",
+        routine: "Ajustes de fome, sono e rotina",
+      },
+    },
+    heroBannerItems: [
+      { icon: "clipboard", label: "Questionario em portugues" },
+      { icon: "calendar", label: "Plano em ate 07 dias uteis" },
+      { icon: "message", label: "Compras reais nos EUA" },
     ],
-  },
-  {
-    name: "Platinum",
-    duration: "12 meses",
-    rhythm: "Anual",
-    brl: "R$ 5.000",
-    usd: "$940",
-    note: "A jornada mais completa para sustentar mudancas com tranquilidade.",
-    features: [
-      "Tudo do Diamond",
-      "Encontros semanais em grupo",
-      "Desafio interno",
-      "Guias e playlist anti-estresse",
+    proof: {
+      kicker: "Prova social",
+      title: "Clareza para seguir.",
+      ratingText: "Feedback de pacientes da consultoria online",
+    },
+    reviews: [
+      {
+        name: "Paciente online",
+        meta: "Rotina ocupada",
+        image: "/generated/reviews-chatgpt-latest/001-use-case-photorealistic-natural-asset-type-website-review-ca-web.webp",
+        quote:
+          "O plano ficou simples de seguir e eu finalmente entendi como adaptar a alimentacao ao meu dia.",
+      },
+      {
+        name: "Brasileira nos EUA",
+        meta: "Plano Diamond",
+        image: "/generated/reviews-chatgpt-latest/002-use-case-photorealistic-natural-asset-type-website-review-ca-web.webp",
+        quote:
+          "As substituicoes com produtos americanos deixaram tudo mais pratico, sem aquela sensacao de dieta impossivel.",
+      },
+      {
+        name: "Paciente BT",
+        meta: "Acompanhamento",
+        image: "/generated/reviews-chatgpt-latest-brazilian/003-brazilian-review-model-web.webp",
+        quote:
+          "Foi acolhimento e organizacao. Eu sabia o que fazer na semana e quando pedir ajuste.",
+      },
     ],
+    sevenDayAria: "Linha de progresso em 7 dias",
+    sevenDayResults: [
+      {
+        day: "Dia 1",
+        title: "Direcao",
+        text: "Plano claro, compras simples e primeira rotina sem improviso.",
+        art: "/generated/seven-day/day-cards/day-1-start-web.webp",
+        icon: "leaf",
+      },
+      {
+        day: "Dia 4",
+        title: "Leveza",
+        text: "Fome mais previsivel, energia melhor e menos vontade de desistir.",
+        art: "/generated/seven-day/day-cards/day-4-light-web.webp",
+        icon: "heart",
+      },
+      {
+        day: "Dia 7",
+        title: "Clareza",
+        text: "Voce ja entende o caminho e sente resultado suficiente para continuar.",
+        art: "/generated/seven-day/day-cards/day-7-happy-web.webp",
+        icon: "spark",
+      },
+    ],
+    experience: {
+      kicker: "Experiencia BT",
+      title: "Direcao sem enrolacao.",
+      text: "Voce nao precisa encaixar uma chamada longa para ser bem atendida. O Questionario BT mapeia sua rotina, seus mercados e suas preferencias antes do plano.",
+    },
+    timeline: [
+      {
+        label: "Voce responde",
+        text: "Saude, rotina, compras e metas.",
+        icon: "clipboard",
+      },
+      {
+        label: "Voce recebe",
+        text: "Plano no app em ate 7 dias uteis.",
+        icon: "apple",
+      },
+      {
+        label: "Voce ajusta",
+        text: "Fome, sono e progresso sem achismo.",
+        icon: "message",
+      },
+    ],
+    plans: {
+      kicker: "Planos",
+      title: "Escolha seu plano.",
+      text: "",
+      featured: "Mais escolhido",
+      choose: "Escolher",
+      payment:
+        "A call ajuda voce a escolher antes de pagar. A vista ou parcelado, em real ou dolar.",
+      items: [
+        {
+          name: "Gold",
+          duration: "03 meses",
+          rhythm: "Trimestral",
+          brl: "R$ 2.000",
+          usd: "$375",
+          note: "Para organizar rotina, escolhas e constancia com direcao clara.",
+          featured: false,
+          features: [
+            "Plano alimentar individualizado",
+            "Suplementacao orientada",
+            "Aplicativo do paciente",
+            "Suporte via WhatsApp",
+          ],
+        },
+        {
+          name: "Diamond",
+          duration: "06 meses",
+          rhythm: "Semestral",
+          brl: "R$ 3.200",
+          usd: "$600",
+          note: "Para quem quer mais tempo de ajuste, suporte e acompanhamento.",
+          featured: true,
+          features: [
+            "Tudo do Gold",
+            "Rastreamento metabolico",
+            "Check-up quinzenal",
+            "Ajustes de plano e rotina",
+          ],
+        },
+        {
+          name: "Platinum",
+          duration: "12 meses",
+          rhythm: "Anual",
+          brl: "R$ 5.000",
+          usd: "$940",
+          note: "A jornada mais completa para sustentar mudancas com tranquilidade.",
+          featured: false,
+          features: [
+            "Tudo do Diamond",
+            "Encontros semanais em grupo",
+            "Desafio interno",
+            "Guias e playlist anti-estresse",
+          ],
+        },
+      ],
+    },
+    services: {
+      portraitAlt: "Bruna Tinoco",
+      kicker: "Incluso na consultoria",
+      title: "Tudo incluso.",
+      items: [
+        {
+          title: "Plano individual",
+          text: "Comida que cabe na sua rotina.",
+          icon: "apple",
+        },
+        {
+          title: "Metabolismo monitorado",
+          text: "Dados para ajustar, nao adivinhar.",
+          icon: "trend",
+        },
+        {
+          title: "Check-ins quinzenais",
+          text: "Ajustes antes de voce travar.",
+          icon: "calendar",
+        },
+        {
+          title: "App + WhatsApp",
+          text: "Passo a passo em portugues.",
+          icon: "message",
+        },
+        {
+          title: "Produtos dos EUA",
+          text: "Marcas e substituicoes faceis.",
+          icon: "clipboard",
+        },
+        {
+          title: "Grupo e desafio BT",
+          text: "Constancia sem fazer sozinha.",
+          icon: "heart",
+        },
+      ],
+    },
+    about: {
+      kicker: "Bruna Tinoco",
+      title: "Nutri integrativa nos EUA.",
+      text:
+        "Para brasileiras que querem entender o corpo, comer com flexibilidade e parar de adaptar dieta brasileira a uma vida que acontece nos EUA.",
+      alt: "Retrato editorial de nutricao integrativa com alimentos naturais",
+    },
+    instagramStats: [
+      { value: "29.4K", label: "seguidores" },
+      { value: "1.4K", label: "posts" },
+    ],
+    instagramPosts: [
+      {
+        title: "Trata a causa",
+        label: "Casos reais",
+        image: "/generated/bruna-gallery-social-accent-web.webp",
+        variant: "feature-post",
+      },
+      {
+        title: "Rotina BT",
+        label: "Nutri integrativa",
+        image: "/bruna-pdf/bruna-about-cutout.webp",
+        variant: "portrait-post",
+      },
+      {
+        title: "Metodo e plano",
+        label: "Call gratuita",
+        image: "/bruna-pdf/bruna-hero-grounded.webp",
+        variant: "story-post",
+      },
+    ],
+    gallery: {
+      kicker: "Instagram da Bruna",
+      title: "Conteudo real.",
+      text:
+        "Posts sobre metodo, mercado americano e rotina possivel para voce se ver no processo.",
+      statAria: "Numeros publicos do Instagram",
+      boardAria: "Posts em destaque do Instagram",
+      button: "Ver Instagram",
+    },
+    schedule: {
+      kicker: "Call gratuita",
+      title: "Agende sua call.",
+      text:
+        "Em 15 minutos, voce entende se a consultoria cabe no seu tempo, investimento e rotina alimentar nos EUA.",
+      perks: [
+        "Veja qual plano combina com sua fase.",
+        "Tire duvidas sobre tempo, custo e flexibilidade.",
+        "Ganhe 15% off se iniciar depois da call.",
+      ],
+      panelKicker: "Agenda preview",
+      panelTitle: "Dia e horario",
+      panelText: "Selecione uma janela para a call gratuita. A confirmacao pode seguir por Instagram ou WhatsApp.",
+      calendarAria: "Calendario de maio de 2026",
+      month: "Maio 2026",
+      prevMonth: "Mes anterior",
+      nextMonth: "Proximo mes",
+      weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+      selectedPrefix: "Selecionado",
+      selectedDate: "Sexta, 22 de maio",
+      dateLabel: "Data",
+      timeLabel: "Horario",
+      serviceLabel: "Formato",
+      service: "Call gratuita BT",
+      duration: "15 min",
+      submit: "Agendar call gratuita",
+      secondary: "Prefiro falar no Instagram",
+      times: ["09:30", "11:00", "12:30", "16:30", "18:00", "19:00"],
+      timezone: "Horarios em EST para brasileiras nos EUA",
+    },
+    offerModal: {
+      kicker: "Oferta da call gratuita",
+      title: "Desbloqueie 15% off.",
+      text:
+        "Receba o lembrete da call e o desconto preview para iniciar sua consultoria com mais clareza.",
+      placeholder: "seuemail@email.com",
+      button: "Quero 15% off",
+      success: "Pronto. Desconto reservado para a preview.",
+      close: "Fechar oferta",
+      imageAlt: "Mulher preparando uma refeicao saudavel durante acompanhamento online",
+    },
+    final: {
+      kicker: "@brunatinoconutri",
+      title: "Seu primeiro passo e a call.",
+      cta: "Agendar call gratuita",
+    },
+    footer: {
+      brandText:
+        "Consultoria nutricional online para brasileiras nos EUA, com plano individual, app do paciente e suporte em portugues.",
+      contactLabel: "Contato",
+      contactTitle: "Escolha seu plano.",
+      copyright:
+        "© 2026 Bruna Tinoco Nutricao Integrativa. Todos os direitos reservados.",
+      bottomLinks: [
+        { label: "Inicio", href: "#inicio" },
+        { label: "Contato", href: "#contato" },
+        { label: "Planos", href: "#planos" },
+      ],
+      columns: [
+        {
+          title: "Consultoria",
+          links: [
+            { label: "Experiencia BT", href: "#experiencia" },
+            { label: "Planos", href: "#planos" },
+            { label: "Avaliacoes", href: "#avaliacoes" },
+          ],
+        },
+        {
+          title: "Acompanhamento",
+          links: [
+            { label: "Questionario otimizado", href: "#experiencia" },
+            { label: "Plano individual", href: "#planos" },
+            { label: "Suporte WhatsApp", href: "#contato" },
+          ],
+        },
+      ],
+    },
   },
-];
+  en: {
+    htmlLang: "en",
+    metadata: {
+      title: "Bruna Tinoco Nutrition | Online Nutrition Coaching",
+      description:
+        "Online nutrition coaching for Brazilian women living in the U.S. who want healthy weight loss with a personalized plan.",
+    },
+    logoAlt: "Bruna Tinoco Integrative Nutrition",
+    socialAria: "Social media",
+    languageAria: "Language",
+    primaryNavAria: "Primary navigation",
+    mobileMenuAria: "Mobile menu",
+    openMenuAria: "Open menu",
+    closeMenuAria: "Close menu",
+    whatsappAria: "Contact on WhatsApp",
+    announcement: "15% off when you book a free call this week",
+    navCta: "Free call",
+    drawerLanguage: "Language",
+    drawerCta: "Book free call",
+    drawerSocials: "Social media",
+    starRatingAria: "5 out of 5 stars",
+    navLinks: [
+      { label: "Home", href: "#inicio" },
+      { label: "Experience", href: "#experiencia" },
+      { label: "Plans", href: "#planos" },
+      { label: "Reviews", href: "#avaliacoes" },
+      { label: "Gallery", href: "#galeria" },
+      { label: "Contact", href: "#contato" },
+    ],
+    hero: {
+      kicker: "Online nutrition coaching",
+      title: "Bruna Tinoco",
+      accent: "Nutri",
+      text:
+        "If you live in the U.S., shop in American stores, and want weight loss without a rigid diet, the BT Experience turns your real routine into a plan, app, and close adjustments.",
+      primary: "Book a free call",
+      instagram: "Instagram",
+      whatsapp: "WhatsApp",
+      portraitAlt: "Bruna Tinoco, integrative nutritionist",
+      stats: {
+        plan: "Meal plan",
+        percent: "83%",
+        adherence: "Weekly adherence",
+        checkin: "Next check-in",
+        weekday: "Thursday",
+        routine: "Hunger, sleep, and routine adjustments",
+      },
+    },
+    heroBannerItems: [
+      { icon: "clipboard", label: "Questionnaire in Portuguese" },
+      { icon: "calendar", label: "Plan within 7 business days" },
+      { icon: "message", label: "Real U.S. grocery options" },
+    ],
+    proof: {
+      kicker: "Social proof",
+      title: "Clarity you can follow.",
+      ratingText: "Feedback from online coaching clients",
+    },
+    reviews: [
+      {
+        name: "Online client",
+        meta: "Busy routine",
+        image: "/generated/reviews-chatgpt-latest/001-use-case-photorealistic-natural-asset-type-website-review-ca-web.webp",
+        quote:
+          "The plan became simple to follow, and I finally understood how to adapt my nutrition to my day.",
+      },
+      {
+        name: "Brazilian in the U.S.",
+        meta: "Diamond plan",
+        image: "/generated/reviews-chatgpt-latest/002-use-case-photorealistic-natural-asset-type-website-review-ca-web.webp",
+        quote:
+          "The swaps using American products made everything practical, without that impossible-diet feeling.",
+      },
+      {
+        name: "BT client",
+        meta: "Ongoing support",
+        image: "/generated/reviews-chatgpt-latest-brazilian/003-brazilian-review-model-web.webp",
+        quote:
+          "It felt supportive and organized. I knew what to do each week and when to ask for an adjustment.",
+      },
+    ],
+    sevenDayAria: "7-day progress timeline",
+    sevenDayResults: [
+      {
+        day: "Day 1",
+        title: "Direction",
+        text: "A clear plan, simple shopping, and the first routine without guesswork.",
+        art: "/generated/seven-day/day-cards/day-1-start-web.webp",
+        icon: "leaf",
+      },
+      {
+        day: "Day 4",
+        title: "Lightness",
+        text: "More predictable hunger, better energy, and less urge to give up.",
+        art: "/generated/seven-day/day-cards/day-4-light-web.webp",
+        icon: "heart",
+      },
+      {
+        day: "Day 7",
+        title: "Clarity",
+        text: "You understand the path and feel enough progress to keep going.",
+        art: "/generated/seven-day/day-cards/day-7-happy-web.webp",
+        icon: "spark",
+      },
+    ],
+    experience: {
+      kicker: "BT Experience",
+      title: "Direction without the drag.",
+      text:
+        "You do not need a long call to feel understood. The BT Questionnaire maps your routine, grocery reality, and preferences before the plan.",
+    },
+    timeline: [
+      {
+        label: "You answer",
+        text: "Health, routine, groceries, and goals.",
+        icon: "clipboard",
+      },
+      {
+        label: "You receive",
+        text: "Your app plan within 7 business days.",
+        icon: "apple",
+      },
+      {
+        label: "You adjust",
+        text: "Hunger, sleep, and progress without guessing.",
+        icon: "message",
+      },
+    ],
+    plans: {
+      kicker: "Plans",
+      title: "Choose your plan.",
+      text: "",
+      featured: "Most chosen",
+      choose: "Choose",
+      payment: "The call helps you choose before paying. Pay in full or installments, in reais or dollars.",
+      items: [
+        {
+          name: "Gold",
+          duration: "03 months",
+          rhythm: "Quarterly",
+          brl: "R$ 2.000",
+          usd: "$375",
+          note: "For organizing your routine, choices, and consistency with clear direction.",
+          featured: false,
+          features: [
+            "Personalized meal plan",
+            "Supplement guidance",
+            "Patient app",
+            "WhatsApp support",
+          ],
+        },
+        {
+          name: "Diamond",
+          duration: "06 months",
+          rhythm: "Semiannual",
+          brl: "R$ 3.200",
+          usd: "$600",
+          note: "For those who want more time for adjustments, support, and follow-up.",
+          featured: true,
+          features: [
+            "Everything in Gold",
+            "Metabolic tracking",
+            "Biweekly check-up",
+            "Plan and routine adjustments",
+          ],
+        },
+        {
+          name: "Platinum",
+          duration: "12 months",
+          rhythm: "Annual",
+          brl: "R$ 5.000",
+          usd: "$940",
+          note: "The most complete journey for sustaining changes with confidence.",
+          featured: false,
+          features: [
+            "Everything in Diamond",
+            "Weekly group meetings",
+            "Internal challenge",
+            "Guides and anti-stress playlist",
+          ],
+        },
+      ],
+    },
+    services: {
+      portraitAlt: "Bruna Tinoco",
+      kicker: "Included in coaching",
+      title: "Everything included.",
+      items: [
+        {
+          title: "Personal plan",
+          text: "Food that fits your routine.",
+          icon: "apple",
+        },
+        {
+          title: "Monitored metabolism",
+          text: "Data to adjust, not guess.",
+          icon: "trend",
+        },
+        {
+          title: "Biweekly check-ins",
+          text: "Adjust before you get stuck.",
+          icon: "calendar",
+        },
+        {
+          title: "App + WhatsApp",
+          text: "Step-by-step support in Portuguese.",
+          icon: "message",
+        },
+        {
+          title: "U.S. products",
+          text: "Easy brands and substitutions.",
+          icon: "clipboard",
+        },
+        {
+          title: "BT group and challenge",
+          text: "Consistency without doing it alone.",
+          icon: "heart",
+        },
+      ],
+    },
+    about: {
+      kicker: "Bruna Tinoco",
+      title: "Integrative nutrition in the U.S.",
+      text:
+        "For Brazilian women who want to understand their body, eat with flexibility, and stop forcing a Brazilian diet into a life that happens in the U.S.",
+      alt: "Editorial portrait for integrative nutrition with natural foods",
+    },
+    instagramStats: [
+      { value: "29.4K", label: "followers" },
+      { value: "1.4K", label: "posts" },
+    ],
+    instagramPosts: [
+      {
+        title: "Treats the cause",
+        label: "Real cases",
+        image: "/generated/bruna-gallery-social-accent-web.webp",
+        variant: "feature-post",
+      },
+      {
+        title: "BT routine",
+        label: "Integrative nutrition",
+        image: "/bruna-pdf/bruna-about-cutout.webp",
+        variant: "portrait-post",
+      },
+      {
+        title: "Method and plan",
+        label: "Free call",
+        image: "/bruna-pdf/bruna-hero-grounded.webp",
+        variant: "story-post",
+      },
+    ],
+    gallery: {
+      kicker: "Bruna's Instagram",
+      title: "Real content.",
+      text:
+        "Posts about the method, American grocery reality, and a routine you can actually see yourself following.",
+      statAria: "Public Instagram numbers",
+      boardAria: "Featured Instagram posts",
+      button: "View Instagram",
+    },
+    schedule: {
+      kicker: "Free call",
+      title: "Book your free call.",
+      text:
+        "In 15 minutes, you see whether the coaching fits your time, budget, and food routine in the U.S.",
+      perks: [
+        "See which plan fits your current season.",
+        "Ask about time, cost, and flexibility.",
+        "Unlock 15% off if you start after the call.",
+      ],
+      panelKicker: "Schedule preview",
+      panelTitle: "Day and time",
+      panelText: "Select a window for the free call. Confirmation can continue through Instagram or WhatsApp.",
+      calendarAria: "May 2026 calendar",
+      month: "May 2026",
+      prevMonth: "Previous month",
+      nextMonth: "Next month",
+      weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+      selectedPrefix: "Selected",
+      selectedDate: "Friday, May 22",
+      dateLabel: "Date",
+      timeLabel: "Time",
+      serviceLabel: "Format",
+      service: "Free BT call",
+      duration: "15 min",
+      submit: "Book a free call",
+      secondary: "I prefer Instagram",
+      times: ["09:30", "11:00", "12:30", "16:30", "18:00", "19:00"],
+      timezone: "Times shown in EST for Brazilian women in the U.S.",
+    },
+    offerModal: {
+      kicker: "Free-call offer",
+      title: "Unlock 15% off.",
+      text:
+        "Get the call reminder and preview discount so you can start with more clarity.",
+      placeholder: "you@email.com",
+      button: "Get 15% off",
+      success: "Done. Your preview discount is reserved.",
+      close: "Close offer",
+      imageAlt: "Woman preparing a healthy meal during online nutrition coaching",
+    },
+    final: {
+      kicker: "@brunatinoconutri",
+      title: "Your first step is the call.",
+      cta: "Book a free call",
+    },
+    footer: {
+      brandText:
+        "Online nutrition coaching for Brazilian women in the U.S., with a personal plan, patient app, and Portuguese support.",
+      contactLabel: "Contact",
+      contactTitle: "Choose your plan.",
+      copyright: "© 2026 Bruna Tinoco Integrative Nutrition. All rights reserved.",
+      bottomLinks: [
+        { label: "Home", href: "#inicio" },
+        { label: "Contact", href: "#contato" },
+        { label: "Plans", href: "#planos" },
+      ],
+      columns: [
+        {
+          title: "Consultation",
+          links: [
+            { label: "BT Experience", href: "#experiencia" },
+            { label: "Plans", href: "#planos" },
+            { label: "Reviews", href: "#avaliacoes" },
+          ],
+        },
+        {
+          title: "Support",
+          links: [
+            { label: "Optimized questionnaire", href: "#experiencia" },
+            { label: "Personal plan", href: "#planos" },
+            { label: "WhatsApp support", href: "#contato" },
+          ],
+        },
+      ],
+    },
+  },
+} as const;
 
-const timeline = [
-  {
-    label: "Questionario",
-    text: "Rotina, metas e preferencias.",
-    icon: "clipboard",
-  },
-  {
-    label: "Plano no app",
-    text: "Cardapio e tarefas claros.",
-    icon: "apple",
-  },
-  {
-    label: "Check-ins",
-    text: "Ajustes por fome, sono e evolucao.",
-    icon: "message",
-  },
-];
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
-const reviews = [
-  {
-    name: "Paciente online",
-    meta: "Rotina ocupada",
-    image: "/generated/reviews-chatgpt-latest/001-use-case-photorealistic-natural-asset-type-website-review-ca-web.webp",
-    quote:
-      "O plano ficou simples de seguir e eu finalmente entendi como adaptar a alimentacao ao meu dia.",
-  },
-  {
-    name: "Brasileira nos EUA",
-    meta: "Plano Diamond",
-    image: "/generated/reviews-chatgpt-latest/002-use-case-photorealistic-natural-asset-type-website-review-ca-web.webp",
-    quote:
-      "As substituicoes com produtos americanos deixaram tudo mais pratico, sem aquela sensacao de dieta impossivel.",
-  },
-  {
-    name: "Paciente BT",
-    meta: "Acompanhamento",
-    image: "/generated/reviews-chatgpt-latest-brazilian/003-brazilian-review-model-web.webp",
-    quote:
-      "Foi acolhimento e organizacao. Eu sabia o que fazer na semana e quando pedir ajuste.",
-  },
-];
-
-const serviceItems = [
-  {
-    title: "Plano individual",
-    text: "Alimentacao e suplementacao para sua rotina.",
-    icon: "apple",
-  },
-  {
-    title: "Metabolismo monitorado",
-    text: "Rastreamento mensal com direcao clara.",
-    icon: "trend",
-  },
-  {
-    title: "Check-ins quinzenais",
-    text: "Ajustes rapidos para manter progresso.",
-    icon: "calendar",
-  },
-  {
-    title: "App + WhatsApp",
-    text: "Tudo organizado com suporte proximo.",
-    icon: "message",
-  },
-  {
-    title: "Produtos dos EUA",
-    text: "Guia simples para compras saudaveis.",
-    icon: "clipboard",
-  },
-  {
-    title: "Grupo e desafio BT",
-    text: "Comunidade para constancia sem pressao.",
-    icon: "heart",
-  },
-];
-
-const heroBannerItems = [
-  { icon: "clipboard", label: "Questionario Otimizado BT" },
-  { icon: "calendar", label: "Plano individual em ate 07 dias uteis" },
-  { icon: "message", label: "Produtos dos EUA e suporte WhatsApp" },
-];
-
-const sevenDayResults = [
-  {
-    day: "Dia 1",
-    title: "Direcao",
-    text: "Plano claro, compras simples e primeira rotina sem improviso.",
-    art: "/generated/seven-day/day-cards/day-1-start-web.webp",
-  },
-  {
-    day: "Dia 4",
-    title: "Leveza",
-    text: "Fome mais previsivel, energia melhor e menos vontade de desistir.",
-    art: "/generated/seven-day/day-cards/day-4-light-web.webp",
-  },
-  {
-    day: "Dia 7",
-    title: "Clareza",
-    text: "Voce ja entende o caminho e sente resultado suficiente para continuar.",
-    art: "/generated/seven-day/day-cards/day-7-happy-web.webp",
-  },
-];
+function resolveLang(searchParams?: { [key: string]: string | string[] | undefined }): Lang {
+  const rawLang = searchParams?.lang;
+  const value = Array.isArray(rawLang) ? rawLang[0] : rawLang;
+  return value === "en" ? "en" : "pt";
+}
 
 const iconPaths = {
   apple:
@@ -189,6 +723,8 @@ const iconPaths = {
     "M7 3v3m10-3v3M4.5 9.2h15M6.2 5h11.6A2.2 2.2 0 0 1 20 7.2v10.6a2.2 2.2 0 0 1-2.2 2.2H6.2A2.2 2.2 0 0 1 4 17.8V7.2A2.2 2.2 0 0 1 6.2 5Zm2.6 8h.1m3.1 0h.1m3.1 0h.1m-6.5 3h.1m3.1 0h.1",
   check:
     "m5 12.4 4.1 4.1L19 6.8",
+  clock:
+    "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 4.2V12l3 1.8",
   clipboard:
     "M9 4.8A2.2 2.2 0 0 1 11.2 3h1.6A2.2 2.2 0 0 1 15 4.8h1.7A2.3 2.3 0 0 1 19 7.1v10.6a2.3 2.3 0 0 1-2.3 2.3H7.3A2.3 2.3 0 0 1 5 17.7V7.1a2.3 2.3 0 0 1 2.3-2.3H9Zm.2 0h5.6M8.5 10h7m-7 3.4h5.3",
   heart:
@@ -207,6 +743,63 @@ const iconPaths = {
 
 type IconName = keyof typeof iconPaths;
 
+const calendarRows = [
+  [
+    { label: "26", state: "muted" },
+    { label: "27", state: "muted" },
+    { label: "28", state: "muted" },
+    { label: "29", state: "muted" },
+    { label: "30", state: "muted" },
+    { label: "1", state: "muted" },
+    { label: "2", state: "muted" },
+  ],
+  [
+    { label: "3", state: "muted" },
+    { label: "4", state: "muted" },
+    { label: "5", state: "muted" },
+    { label: "6", state: "muted" },
+    { label: "7", state: "muted" },
+    { label: "8", state: "today" },
+    { label: "9" },
+  ],
+  [
+    { label: "10" },
+    { label: "11" },
+    { label: "12" },
+    { label: "13" },
+    { label: "14" },
+    { label: "15" },
+    { label: "16" },
+  ],
+  [
+    { label: "17" },
+    { label: "18" },
+    { label: "19" },
+    { label: "20" },
+    { label: "21" },
+    { label: "22", state: "selected" },
+    { label: "23" },
+  ],
+  [
+    { label: "24" },
+    { label: "25" },
+    { label: "26" },
+    { label: "27" },
+    { label: "28" },
+    { label: "29" },
+    { label: "30" },
+  ],
+  [
+    { label: "31", state: "muted" },
+    { label: "1", state: "muted" },
+    { label: "2", state: "muted" },
+    { label: "3", state: "muted" },
+    { label: "4", state: "muted" },
+    { label: "5", state: "muted" },
+    { label: "6", state: "muted" },
+  ],
+] as const;
+
 function MiniIcon({ name }: { name: IconName }) {
   return (
     <svg className="mini-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -215,57 +808,14 @@ function MiniIcon({ name }: { name: IconName }) {
   );
 }
 
-const instagramStats = [
-  { value: "29.4K", label: "seguidores" },
-  { value: "1.4K", label: "posts" },
-];
-
-const instagramPosts = [
-  {
-    title: "Bastidores da consultoria",
-    label: "Atendimento online",
-    image: "/bruna-pdf/bruna-about-cutout.webp",
-    variant: "portrait-post",
-  },
-  {
-    title: "Rotina possivel nos EUA",
-    label: "Escolhas simples",
-    image: "/generated/bruna-gallery-social-accent-web.webp",
-    variant: "food-post",
-  },
-  {
-    title: "Plano, app e suporte",
-    label: "Consultoria BT",
-    image: "/bruna-pdf/bruna-hero-cutout.webp",
-    variant: "support-post",
-  },
-];
-
-const footerColumns = [
-  {
-    title: "Consultoria",
-    links: [
-      { label: "Experiencia BT", href: "#experiencia" },
-      { label: "Planos", href: "#planos" },
-      { label: "Avaliacoes", href: "#avaliacoes" },
-    ],
-  },
-  {
-    title: "Acompanhamento",
-    links: [
-      { label: "Questionario otimizado", href: "#experiencia" },
-      { label: "Plano individual", href: "#planos" },
-      { label: "Suporte WhatsApp", href: "#contato" },
-    ],
-  },
-];
-
 function SocialIcons({
   compact = false,
   tone = "light",
+  ariaLabel,
 }: {
   compact?: boolean;
   tone?: "light" | "dark";
+  ariaLabel: string;
 }) {
   return (
     <div
@@ -276,7 +826,7 @@ function SocialIcons({
       ]
         .filter(Boolean)
         .join(" ")}
-      aria-label="Redes sociais"
+      aria-label={ariaLabel}
     >
       {socialLinks.map((social) => (
         <a
@@ -294,25 +844,30 @@ function SocialIcons({
   );
 }
 
-function LanguageToggle({ compact = false }: { compact?: boolean }) {
+function LanguageToggle({ compact = false, lang }: { compact?: boolean; lang: Lang }) {
   return (
-    <div className={compact ? "language-toggle compact" : "language-toggle"} aria-label="Idioma">
+    <div
+      className={compact ? "language-toggle compact" : "language-toggle"}
+      aria-label={translations[lang].languageAria}
+    >
       <span className="language-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false">
           <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 1.8c1.05 1.18 1.86 2.45 2.34 3.72H9.66C10.14 7.25 10.95 5.98 12 4.8Zm-4.2.95a12.6 12.6 0 0 0-1.92 2.77H3.8A7.3 7.3 0 0 1 7.8 5.75ZM3.23 10.3h2.04a11.2 11.2 0 0 0 0 3.4H3.23a7.33 7.33 0 0 1 0-3.4Zm.57 5.18h2.08a12.6 12.6 0 0 0 1.92 2.77 7.3 7.3 0 0 1-4-2.77Zm8.2 3.72c-1.05-1.18-1.86-2.45-2.34-3.72h4.68c-.48 1.27-1.29 2.54-2.34 3.72Zm2.93-5.5H9.07a9.3 9.3 0 0 1 0-3.4h5.86a9.3 9.3 0 0 1 0 3.4Zm1.27 4.55a12.6 12.6 0 0 0 1.92-2.77h2.08a7.3 7.3 0 0 1-4 2.77Zm4.57-4.55h-2.04a11.2 11.2 0 0 0 0-3.4h2.04a7.33 7.33 0 0 1 0 3.4Zm-2.65-5.18a12.6 12.6 0 0 0-1.92-2.77 7.3 7.3 0 0 1 4 2.77h-2.08Z" />
         </svg>
       </span>
-      <a href="#inicio" aria-current="true">
+      <a href="?lang=pt#inicio" aria-current={lang === "pt" ? "true" : undefined}>
         PT
       </a>
-      <a href="#contato">EN</a>
+      <a href="?lang=en#inicio" aria-current={lang === "en" ? "true" : undefined}>
+        EN
+      </a>
     </div>
   );
 }
 
-function StarRating() {
+function StarRating({ label }: { label: string }) {
   return (
-    <div className="stars" aria-label="5 de 5 estrelas">
+    <div className="stars" aria-label={label}>
       {Array.from({ length: 5 }).map((_, index) => (
         <svg key={index} viewBox="0 0 24 24" aria-hidden="true">
           <path d="m12 2.6 2.85 5.78 6.38.93-4.62 4.5 1.09 6.36L12 17.17l-5.7 3 1.09-6.36-4.62-4.5 6.38-.93L12 2.6Z" />
@@ -322,22 +877,43 @@ function StarRating() {
   );
 }
 
-export default function Home() {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: SearchParams;
+}): Promise<Metadata> {
+  const lang = resolveLang(searchParams ? await searchParams : undefined);
+  return translations[lang].metadata;
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: SearchParams;
+}) {
+  const lang = resolveLang(searchParams ? await searchParams : undefined);
+  const t = translations[lang];
+
   return (
     <main className="site-shell">
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang=${JSON.stringify(t.htmlLang)};`,
+        }}
+      />
       <header className="site-header">
         <div className="announcement-bar">
           <div className="announcement-left">
-            <a className="announcement-whatsapp" href={whatsappLink} aria-label="Contato pelo WhatsApp">
+            <a className="announcement-whatsapp" href={whatsappLink} aria-label={t.whatsappAria}>
               <img src="/social-icons/whatsapp-white.svg" alt="" width="16" height="16" />
               <span>WhatsApp</span>
             </a>
           </div>
-          <a className="announcement-center" href="#planos">
-            Consultoria online com plano, app e check-ins quinzenais
+          <a className="announcement-center" href="#agendar">
+            {t.announcement}
             <span aria-hidden="true">-&gt;</span>
           </a>
-          <SocialIcons compact />
+          <SocialIcons compact ariaLabel={t.socialAria} />
         </div>
 
         <input className="drawer-toggle" id="mobile-drawer" type="checkbox" aria-hidden="true" />
@@ -345,15 +921,15 @@ export default function Home() {
           <a href="#inicio" className="brand-mark" aria-label="Bruna Tinoco Nutri">
             <Image
               src="/bruna-logo.webp"
-              alt="Bruna Tinoco Nutricao Integrativa"
+              alt={t.logoAlt}
               width={1120}
               height={295}
               preload
             />
           </a>
 
-          <nav className="desktop-links" aria-label="Navegacao principal">
-            {navLinks.map((link) => (
+          <nav className="desktop-links" aria-label={t.primaryNavAria}>
+            {t.navLinks.map((link) => (
               <a href={link.href} key={link.href}>
                 {link.label}
               </a>
@@ -361,11 +937,11 @@ export default function Home() {
           </nav>
 
           <div className="nav-actions">
-            <LanguageToggle />
-            <a className="nav-cta" href="#contato">
-              Agendar call
+            <LanguageToggle lang={lang} />
+            <a className="nav-cta" href="#agendar">
+              {t.navCta}
             </a>
-            <label className="menu-button" htmlFor="mobile-drawer" aria-label="Abrir menu">
+            <label className="menu-button" htmlFor="mobile-drawer" aria-label={t.openMenuAria}>
               <span />
               <span />
               <span />
@@ -374,31 +950,31 @@ export default function Home() {
         </div>
 
         <label className="drawer-backdrop" htmlFor="mobile-drawer" aria-hidden="true" />
-        <aside className="mobile-drawer" aria-label="Menu mobile">
+        <aside className="mobile-drawer" aria-label={t.mobileMenuAria}>
           <div className="drawer-top">
             <Image src="/bruna-logo.webp" alt="" width={1120} height={295} />
-            <label htmlFor="mobile-drawer" aria-label="Fechar menu">
+            <label htmlFor="mobile-drawer" aria-label={t.closeMenuAria}>
               <span />
               <span />
             </label>
           </div>
           <nav className="drawer-links">
-            {navLinks.map((link) => (
+            {t.navLinks.map((link) => (
               <a href={link.href} key={link.href}>
                 {link.label}
               </a>
             ))}
           </nav>
           <div className="drawer-card">
-            <p>Idioma</p>
-            <LanguageToggle compact />
+            <p>{t.drawerLanguage}</p>
+            <LanguageToggle compact lang={lang} />
           </div>
-          <a className="drawer-cta" href="#contato">
-            Agendar consultoria
+          <a className="drawer-cta" href="#agendar">
+            {t.drawerCta}
           </a>
           <div className="drawer-socials">
-            <p>Redes sociais</p>
-            <SocialIcons />
+            <p>{t.drawerSocials}</p>
+            <SocialIcons ariaLabel={t.socialAria} />
           </div>
         </aside>
       </header>
@@ -419,26 +995,19 @@ export default function Home() {
           <div className="hero-copy">
             <div className="hero-kicker">
               <span />
-              Consultoria nutricional online
+              {t.hero.kicker}
             </div>
             <h1>
-              Bruna Tinoco <span>Nutri</span>
+              {t.hero.title} <span>{t.hero.accent}</span>
             </h1>
-            <p>
-              Emagrecimento com saude para brasileiras que vivem nos EUA, com plano
-              individualizado, aplicativo do paciente e acompanhamento proximo na rotina real.
-            </p>
+            <p>{t.hero.text}</p>
             <div className="hero-actions">
-              <a className="primary-link" href="#planos">
-                Ver planos
+              <a className="primary-link" href="#agendar">
+                {t.hero.primary}
               </a>
-              <a
-                className="secondary-link"
-                href="https://www.instagram.com/brunatinoconutri/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Falar no Instagram
+              <a className="secondary-link hero-whatsapp-link" href={whatsappLink}>
+                <img src="/social-icons/whatsapp-white.svg" alt="" width="16" height="16" />
+                <span>{t.hero.whatsapp}</span>
               </a>
             </div>
           </div>
@@ -446,9 +1015,9 @@ export default function Home() {
           <div className="hero-visual">
             <div className="portrait-glow" aria-hidden="true" />
             <div className="hero-stat-card nutrition-card" aria-hidden="true">
-              <span>Plano alimentar</span>
-              <strong>83%</strong>
-              <em>Adesao semanal</em>
+              <span>{t.hero.stats.plan}</span>
+              <strong>{t.hero.stats.percent}</strong>
+              <em>{t.hero.stats.adherence}</em>
               <div className="progress-track">
                 <i />
               </div>
@@ -456,7 +1025,7 @@ export default function Home() {
             <div className="hero-portrait">
               <Image
                 src="/bruna-pdf/bruna-hero-grounded.webp"
-                alt="Bruna Tinoco, nutricionista integrativa"
+                alt={t.hero.portraitAlt}
                 width={732}
                 height={1178}
                 sizes="(min-width: 1100px) 44vw, 86vw"
@@ -464,9 +1033,9 @@ export default function Home() {
               />
             </div>
             <div className="hero-stat-card checkin-card" aria-hidden="true">
-              <span>Proximo check-in</span>
-              <strong>Quinta</strong>
-              <em>Ajustes de fome, sono e rotina</em>
+              <span>{t.hero.stats.checkin}</span>
+              <strong>{t.hero.stats.weekday}</strong>
+              <em>{t.hero.stats.routine}</em>
             </div>
             <div className="hero-stat-card chart-card" aria-hidden="true">
               <div className="mini-bars">
@@ -483,7 +1052,7 @@ export default function Home() {
         </div>
 
         <div className="hero-banner">
-          {heroBannerItems.map((item) => (
+          {t.heroBannerItems.map((item) => (
             <span key={item.label}>
               <MiniIcon name={item.icon as IconName} />
               {item.label}
@@ -494,56 +1063,24 @@ export default function Home() {
 
       <section className="proof-reviews" id="avaliacoes">
         <div className="proof-summary reveal">
-          <p className="section-kicker">Prova social</p>
-          <h2>Clareza, acolhimento e rotina possivel.</h2>
+          <p className="section-kicker">{t.proof.kicker}</p>
+          <h2>{t.proof.title}</h2>
           <div className="proof-rating">
-            <StarRating />
-            <span>Feedback de pacientes da consultoria online</span>
+            <StarRating label={t.starRatingAria} />
+            <span>{t.proof.ratingText}</span>
           </div>
         </div>
-        <div className="proof-review-shell">
-          <div className="proof-review-grid">
-            {reviews.map((review, index) => (
-              <article className="proof-review-card reveal" key={review.name}>
-                <div className="proof-review-image">
-                  <Image
-                    src={review.image}
-                    alt=""
-                    fill
-                    loading={index === 0 ? "eager" : "lazy"}
-                    sizes="(max-width: 620px) 82vw, 22vw"
-                  />
-                </div>
-                <div className="proof-review-top">
-                  <span>
-                    <MiniIcon name="user" />
-                  </span>
-                  <div>
-                    <strong>{review.name}</strong>
-                    <small>{review.meta}</small>
-                  </div>
-                </div>
-                <StarRating />
-                <p>{review.quote}</p>
-              </article>
-            ))}
-          </div>
-          <div className="proof-carousel-dots" aria-hidden="true">
-            {reviews.map((review, index) => (
-              <span className={index === 0 ? "active" : ""} key={review.name} />
-            ))}
-          </div>
-        </div>
+        <ReviewCarousel reviews={t.reviews} starRatingAria={t.starRatingAria} />
       </section>
 
       <section className="seven-day-section" id="resultados">
         <ViewportSequenceTrigger selector=".growth-story" />
-        <div className="growth-story reveal" aria-label="Linha de progresso em 7 dias">
+        <div className="growth-story reveal" aria-label={t.sevenDayAria}>
           <div className="growth-line" aria-hidden="true" />
           <div className="growth-days">
             <div className="growth-connector connector-one" aria-hidden="true" />
             <div className="growth-connector connector-two" aria-hidden="true" />
-            {sevenDayResults.map((item) => (
+            {t.sevenDayResults.map((item) => (
               <article className="growth-day" key={item.day}>
                 <div className="growth-day-art" aria-hidden="true">
                   <Image
@@ -554,7 +1091,7 @@ export default function Home() {
                   />
                 </div>
                 <span>
-                  <MiniIcon name={item.day === "Dia 1" ? "leaf" : item.day === "Dia 4" ? "heart" : "spark"} />
+                  <MiniIcon name={item.icon as IconName} />
                   {item.day}
                 </span>
                 <h2 className="growth-day-title">{item.title}</h2>
@@ -567,14 +1104,12 @@ export default function Home() {
 
       <section className="experience-section" id="experiencia">
         <div className="experience-copy reveal">
-          <p className="section-kicker">Experiencia BT</p>
-          <h2>Plano, app e ajuste em um fluxo claro.</h2>
-          <p>
-            Menos improviso, mais acompanhamento e decisoes simples para a rotina real.
-          </p>
+          <p className="section-kicker">{t.experience.kicker}</p>
+          <h2>{t.experience.title}</h2>
+          <p>{t.experience.text}</p>
         </div>
         <div className="experience-steps">
-          {timeline.map((item, index) => (
+          {t.timeline.map((item, index) => (
             <article className="step-row reveal" key={item.label}>
               <span>
                 <MiniIcon name={item.icon as IconName} />
@@ -591,20 +1126,17 @@ export default function Home() {
 
       <section className="plans-section" id="planos">
         <div className="plans-heading reveal">
-          <p className="section-kicker">Planos de consultoria</p>
-          <h2>Escolha o nivel de acompanhamento que combina com sua rotina.</h2>
-          <p>
-            Todos os materiais sao entregues em ate 07 dias uteis apos o
-            Questionario Otimizado BT, com suporte e organizacao pelo aplicativo.
-          </p>
+          <p className="section-kicker">{t.plans.kicker}</p>
+          <h2>{t.plans.title}</h2>
+          {t.plans.text ? <p>{t.plans.text}</p> : null}
         </div>
 
         <div className="plans-grid">
-          {plans.map((plan) => (
+          {t.plans.items.map((plan) => (
             <article className={plan.featured ? "plan-card featured reveal" : "plan-card reveal"} key={plan.name}>
               <div className="plan-top">
                 <span>{plan.rhythm}</span>
-                {plan.featured ? <strong>Mais escolhido</strong> : null}
+                {plan.featured ? <strong>{t.plans.featured}</strong> : null}
               </div>
               <h2 className="plan-name">{plan.name}</h2>
               <p>{plan.note}</p>
@@ -621,16 +1153,14 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <a className="plan-action" href="#contato">
-                Escolher {plan.name}
+              <a className="plan-action" href="#agendar">
+                {t.plans.choose} {plan.name}
                 <MiniIcon name="trend" />
               </a>
             </article>
           ))}
         </div>
-        <p className="payment-note reveal">
-          Pagamento a vista ou parcelado no cartao de credito, em real ou dolar americano.
-        </p>
+        <p className="payment-note reveal">{t.plans.payment}</p>
       </section>
 
       <section className="services-section">
@@ -644,7 +1174,7 @@ export default function Home() {
           <div className="services-portrait">
             <Image
               src="/bruna-pdf/bruna-about-cutout.webp"
-              alt="Bruna Tinoco"
+              alt={t.services.portraitAlt}
               width={430}
               height={618}
               sizes="(max-width: 900px) 62vw, 26vw"
@@ -652,10 +1182,10 @@ export default function Home() {
           </div>
         </div>
         <div className="services-copy reveal">
-          <p className="section-kicker">Incluso na consultoria</p>
-          <h2>Suporte completo, sem depender de motivacao perfeita.</h2>
+          <p className="section-kicker">{t.services.kicker}</p>
+          <h2>{t.services.title}</h2>
           <div className="service-list">
-            {serviceItems.map((item) => (
+            {t.services.items.map((item) => (
               <article key={item.title} className="service-item">
                 <span>
                   <MiniIcon name={item.icon as IconName} />
@@ -672,18 +1202,15 @@ export default function Home() {
 
       <section className="about-section">
         <div className="about-copy reveal">
-          <p className="section-kicker">Bruna Tinoco</p>
-          <h2>Nutricionista integrativa, funcional e health coach.</h2>
-          <p>
-            Especialista em ajudar brasileiras que vivem nos EUA e desejam emagrecer
-            com saude, aumentando autoestima sem abrir mao de flexibilidade e equilibrio.
-          </p>
+          <p className="section-kicker">{t.about.kicker}</p>
+          <h2>{t.about.title}</h2>
+          <p>{t.about.text}</p>
           <strong>CRN 20101459</strong>
         </div>
         <div className="about-art">
           <Image
             src="/generated/about/nutrition-food-headshot-provided-web.webp"
-            alt="Retrato editorial de nutricao integrativa com alimentos naturais"
+            alt={t.about.alt}
             fill
             loading="eager"
             quality={90}
@@ -694,14 +1221,11 @@ export default function Home() {
 
       <section className="instagram-gallery" id="galeria">
         <div className="gallery-copy reveal">
-          <p className="section-kicker">Instagram da Bruna</p>
-          <h2>Conteudo leve, direto e real.</h2>
-          <p>
-            Posts selecionados sobre consultoria, alimentacao e vida real para
-            brasileiras nos EUA.
-          </p>
-          <div className="instagram-stat-grid" aria-label="Numeros publicos do Instagram">
-            {instagramStats.map((stat) => (
+          <p className="section-kicker">{t.gallery.kicker}</p>
+          <h2>{t.gallery.title}</h2>
+          <p>{t.gallery.text}</p>
+          <div className="instagram-stat-grid" aria-label={t.gallery.statAria}>
+            {t.instagramStats.map((stat) => (
               <div key={stat.label}>
                 <strong>{stat.value}</strong>
                 <span>{stat.label}</span>
@@ -715,24 +1239,25 @@ export default function Home() {
             rel="noreferrer"
           >
             <img src="/social-icons/instagram-white.svg" alt="" width="16" height="16" />
-            Ver Instagram
+            {t.gallery.button}
           </a>
         </div>
 
-        <div className="gallery-board reveal" aria-label="Posts em destaque do Instagram">
-          {instagramPosts.map((post) => (
+        <div className="gallery-board reveal" aria-label={t.gallery.boardAria}>
+          {t.instagramPosts.map((post) => (
             <a
-              className="gallery-tile post-card"
+              className={`gallery-tile post-card ${post.variant}`}
               href="https://www.instagram.com/brunatinoconutri/"
               key={post.title}
               target="_blank"
               rel="noreferrer"
             >
-              <span className={`post-media ${post.variant}`}>
+              <span className="post-media">
                 <Image
                   src={post.image}
                   alt=""
                   fill
+                  loading="eager"
                   sizes="(max-width: 900px) 76vw, 24vw"
                 />
               </span>
@@ -743,6 +1268,122 @@ export default function Home() {
             </a>
           ))}
         </div>
+      </section>
+
+      <section className="booking-section" id="agendar">
+        <div className="booking-copy reveal">
+          <p className="section-kicker">{t.schedule.kicker}</p>
+          <h2>{t.schedule.title}</h2>
+          <p>{t.schedule.text}</p>
+          <div className="booking-perks">
+            {t.schedule.perks.map((perk) => (
+              <span key={perk}>
+                <MiniIcon name="check" />
+                {perk}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <form className="booking-panel reveal">
+          <div className="booking-panel-head">
+            <span>{t.schedule.panelKicker}</span>
+            <h2>{t.schedule.panelTitle}</h2>
+            <p>{t.schedule.panelText}</p>
+          </div>
+
+          <div className="booking-selector">
+            <div className="calendar-card" aria-label={t.schedule.calendarAria}>
+              <div className="calendar-title">
+                <span>
+                  <MiniIcon name="calendar" />
+                  {t.schedule.dateLabel}
+                </span>
+              </div>
+              <div className="calendar-month">
+                <button type="button" aria-label={t.schedule.prevMonth}>
+                  ‹
+                </button>
+                <strong>{t.schedule.month}</strong>
+                <button type="button" aria-label={t.schedule.nextMonth}>
+                  ›
+                </button>
+              </div>
+              <div className="calendar-grid">
+                {t.schedule.weekdays.map((day) => (
+                  <span className="calendar-weekday" key={day}>
+                    {day}
+                  </span>
+                ))}
+                {calendarRows.flat().map((day, index) => {
+                  const state = "state" in day ? day.state : undefined;
+
+                  return (
+                    <button
+                      className={[
+                        "calendar-day",
+                        state === "muted" ? "is-muted" : "",
+                        state === "today" ? "is-today" : "",
+                        state === "selected" ? "is-selected" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      key={`${day.label}-${index}`}
+                      type="button"
+                    >
+                      {day.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="selected-date">
+                <span>{t.schedule.selectedPrefix}</span>
+                <strong>{t.schedule.selectedDate}</strong>
+              </p>
+            </div>
+
+            <div className="schedule-side">
+              <div className="service-card">
+                <span>
+                  <MiniIcon name="check" />
+                  {t.schedule.serviceLabel}
+                </span>
+                <div>
+                  <strong>{t.schedule.service}</strong>
+                  <em>{t.schedule.duration}</em>
+                </div>
+              </div>
+
+              <div className="time-card">
+                <span>
+                  <MiniIcon name="clock" />
+                  {t.schedule.timeLabel}
+                </span>
+                <div className="booking-slots" aria-label={t.schedule.timeLabel}>
+                  {t.schedule.times.map((time, index) => (
+                    <button className={index === 3 ? "is-selected" : ""} type="button" key={time}>
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="booking-actions">
+                <button className="booking-submit" type="button">
+                  {t.schedule.submit}
+                </button>
+                <a
+                  href="https://www.instagram.com/brunatinoconutri/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t.schedule.secondary}
+                </a>
+              </div>
+              <p className="booking-note">{t.schedule.timezone}</p>
+            </div>
+          </div>
+        </form>
       </section>
 
       <section className="final-section" id="contato">
@@ -762,17 +1403,15 @@ export default function Home() {
           className="final-botanical"
         />
         <div className="final-content reveal">
-          <p className="section-kicker">@brunatinoconutri</p>
-          <h2>Comece sua consultoria com um plano que acompanha voce.</h2>
+          <p className="section-kicker">{t.final.kicker}</p>
+          <h2>{t.final.title}</h2>
           <a
             className="primary-link"
-            href="https://www.instagram.com/brunatinoconutri/"
-            target="_blank"
-            rel="noreferrer"
+            href="#agendar"
           >
-            Adquirir consultoria
+            {t.final.cta}
           </a>
-          <SocialIcons />
+          <SocialIcons ariaLabel={t.socialAria} />
         </div>
       </section>
 
@@ -782,20 +1421,17 @@ export default function Home() {
             <a href="#inicio" aria-label="Bruna Tinoco Nutri">
               <Image
                 src="/bruna-logo.webp"
-                alt="Bruna Tinoco Nutricao Integrativa"
+                alt={t.logoAlt}
                 width={1120}
                 height={295}
               />
             </a>
-            <p>
-              Consultoria nutricional online para brasileiras nos EUA, com plano
-              alimentar individualizado, aplicativo do paciente e suporte proximo.
-            </p>
+            <p>{t.footer.brandText}</p>
             <strong>CRN 20101459</strong>
           </div>
 
           <div className="footer-columns">
-            {footerColumns.map((column) => (
+            {t.footer.columns.map((column) => (
               <nav aria-label={column.title} key={column.title}>
                 <h2>{column.title}</h2>
                 {column.links.map((link) => (
@@ -808,8 +1444,8 @@ export default function Home() {
           </div>
 
           <div className="footer-contact">
-            <p className="footer-label">Contato</p>
-            <h2>Fale com Bruna e escolha seu melhor plano.</h2>
+            <p className="footer-label">{t.footer.contactLabel}</p>
+            <h2>{t.footer.contactTitle}</h2>
             <div className="footer-contact-actions">
               <a className="footer-cta whatsapp" href={whatsappLink}>
                 <img src="/social-icons/whatsapp-white.svg" alt="" width="17" height="17" />
@@ -825,19 +1461,23 @@ export default function Home() {
                 Instagram
               </a>
             </div>
-            <SocialIcons tone="dark" />
+            <SocialIcons tone="dark" ariaLabel={t.socialAria} />
           </div>
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2026 Bruna Tinoco Nutricao Integrativa. Todos os direitos reservados.</p>
+          <p>{t.footer.copyright}</p>
           <div>
-            <a href="#inicio">Inicio</a>
-            <a href="#contato">Contato</a>
-            <a href="#planos">Planos</a>
+            {t.footer.bottomLinks.map((link) => (
+              <a href={link.href} key={link.href}>
+                {link.label}
+              </a>
+            ))}
           </div>
         </div>
       </footer>
+
+      <EmailOfferPopup copy={t.offerModal} />
     </main>
   );
 }
