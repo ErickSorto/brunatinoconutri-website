@@ -384,6 +384,8 @@ select {
   font-size: 0.82rem;
   font-weight: 860;
   letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-align: center;
   text-transform: uppercase;
   transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease;
 }
@@ -553,6 +555,12 @@ select {
   margin-top: 26px;
   opacity: 0;
   animation: rise-in 720ms 380ms ease forwards;
+}
+
+.hero-actions .primary-link {
+  justify-content: center;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .hero-whatsapp-link {

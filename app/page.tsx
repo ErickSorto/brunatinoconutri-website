@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import BookingScheduler from "./BookingScheduler";
 import EmailOfferPopup from "./EmailOfferPopup";
 import ReviewCarousel from "./ReviewCarousel";
@@ -64,9 +65,6 @@ const translations = {
     navLinks: [
       { label: "Inicio", href: "#inicio" },
       { label: "Avaliacoes", href: "#avaliacoes" },
-      { label: "Video", href: "#video-prova" },
-      { label: "7 dias", href: "#resultados" },
-      { label: "Experiencia", href: "#experiencia" },
       { label: "Planos", href: "#planos" },
       { label: "Galeria", href: "#galeria" },
     ],
@@ -437,9 +435,6 @@ const translations = {
     navLinks: [
       { label: "Home", href: "#inicio" },
       { label: "Reviews", href: "#avaliacoes" },
-      { label: "Video", href: "#video-prova" },
-      { label: "7 days", href: "#resultados" },
-      { label: "Experience", href: "#experiencia" },
       { label: "Plans", href: "#planos" },
       { label: "Gallery", href: "#galeria" },
     ],
@@ -939,12 +934,24 @@ function LanguageToggle({ compact = false, lang }: { compact?: boolean; lang: La
           <path d="M14 18h6" />
         </svg>
       </span>
-      <a href="?lang=pt#inicio" aria-current={lang === "pt" ? "true" : undefined}>
+      <Link
+        href={{ pathname: "/", query: { lang: "pt" } }}
+        replace
+        scroll={false}
+        prefetch
+        aria-current={lang === "pt" ? "true" : undefined}
+      >
         PT
-      </a>
-      <a href="?lang=en#inicio" aria-current={lang === "en" ? "true" : undefined}>
+      </Link>
+      <Link
+        href={{ pathname: "/", query: { lang: "en" } }}
+        replace
+        scroll={false}
+        prefetch
+        aria-current={lang === "en" ? "true" : undefined}
+      >
         EN
-      </a>
+      </Link>
     </div>
   );
 }
