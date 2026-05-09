@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import BookingScheduler from "./BookingScheduler";
 import EmailOfferPopup from "./EmailOfferPopup";
+import MobileDrawerDismiss from "./MobileDrawerDismiss";
 import ReviewCarousel from "./ReviewCarousel";
 import ViewportSequenceTrigger from "./ViewportSequenceTrigger";
 
@@ -994,6 +995,7 @@ export default async function Home({
         }}
       />
       <header className="site-header">
+        <MobileDrawerDismiss />
         <div className="announcement-bar">
           <div className="announcement-left">
             <a
