@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import BookingScheduler from "./BookingScheduler";
+import ClientProofVideo from "./ClientProofVideo";
 import EmailOfferPopup from "./EmailOfferPopup";
 import MobileDrawerDismiss from "./MobileDrawerDismiss";
 import ReviewCarousel from "./ReviewCarousel";
@@ -123,7 +124,7 @@ const translations = {
           label: "Reel 02",
           title: "Mudanca real",
           src: "/instagram/bruna-proof-change-thays.mp4",
-          poster: "/generated/video-covers/change-real-pt-web.webp",
+          poster: "/generated/video-covers/change-real-pt-poster-9x16.webp",
           href: "https://www.instagram.com/p/DW7XXMUEq7C/",
         },
         {
@@ -404,7 +405,7 @@ const translations = {
       primary: "Agendar consulta gratuita",
       secondary: "Ver no Instagram",
       videoAria: "Depoimento de cliente da consultoria Bruna Tinoco",
-      poster: "/generated/client-proof/still-not-convinced-cover-web.webp",
+      poster: "/generated/client-proof/still-not-convinced-pt-cover.webp",
     },
     offerModal: {
       kicker: "Oferta da consulta gratuita",
@@ -534,7 +535,7 @@ const translations = {
           label: "Reel 02",
           title: "Real change",
           src: "/instagram/bruna-proof-change-thays.mp4",
-          poster: "/generated/video-covers/change-real-en-web.webp",
+          poster: "/generated/video-covers/change-real-en-poster-9x16.webp",
           href: "https://www.instagram.com/p/DW7XXMUEq7C/",
         },
         {
@@ -815,7 +816,7 @@ const translations = {
       primary: "Book free consultation",
       secondary: "View on Instagram",
       videoAria: "Client testimonial for Bruna Tinoco coaching",
-      poster: "/generated/client-proof/still-not-convinced-cover-web.webp",
+      poster: "/generated/client-proof/still-not-convinced-en-cover.webp",
     },
     offerModal: {
       kicker: "Free consultation offer",
@@ -1586,17 +1587,11 @@ export default async function Home({
             </a>
           </div>
         </div>
-        <div className="client-proof-video reveal">
-          <video
-            aria-label={t.clientProof.videoAria}
-            controls
-            playsInline
-            poster={t.clientProof.poster}
-            preload="metadata"
-          >
-            <source src="/instagram/bruna-client-proof-dxsd.mp4" type="video/mp4" />
-          </video>
-        </div>
+        <ClientProofVideo
+          ariaLabel={t.clientProof.videoAria}
+          poster={t.clientProof.poster}
+          src="/instagram/bruna-client-proof-dxsd.mp4"
+        />
       </section>
 
       <section className="final-section" id="contato">

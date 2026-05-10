@@ -60,10 +60,11 @@ export default function VideoProofStack({
         {videos.map((video, index) => {
           const offset = wrapIndex(index - activeIndex, videos.length);
           const isActive = offset === 0;
+          const activePlaying = isActive && isPlaying;
 
           return (
             <article
-              className="video-stack-card"
+              className={`video-stack-card${activePlaying ? " is-playing" : ""}`}
               data-position={offset}
               aria-hidden={!isActive}
               key={video.src}
@@ -95,6 +96,22 @@ export default function VideoProofStack({
               >
                 <source src={video.src} type="video/mp4" />
               </video>
+              <button
+                aria-label={`Play ${video.title}`}
+                className="video-card-play"
+                tabIndex={isActive ? 0 : -1}
+                type="button"
+                onClick={() => {
+                  if (!isActive) {
+                    return;
+                  }
+
+                  const currentVideo = videoRefs.current[index];
+                  currentVideo?.play();
+                }}
+              >
+                <span aria-hidden="true" />
+              </button>
               <div className="video-card-label">
                 <span>{video.label}</span>
                 <strong>{video.title}</strong>

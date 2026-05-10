@@ -1160,6 +1160,10 @@ select {
   background: #000;
 }
 
+.video-card-play {
+  display: none;
+}
+
 .video-card-label {
   position: absolute;
   right: 12px;
@@ -3115,6 +3119,90 @@ select {
 
 .client-proof-video video::backdrop {
   background: #000;
+}
+
+.client-proof-play {
+  display: none;
+}
+
+@media (min-width: 981px) {
+  .video-card-play,
+  .client-proof-play {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255, 253, 247, 0.54);
+    border-radius: 999px;
+    background: rgba(255, 253, 247, 0.72);
+    color: var(--forest);
+    cursor: pointer;
+    box-shadow: 0 14px 38px rgba(24, 39, 31, 0.22);
+    backdrop-filter: blur(12px);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      background 180ms ease;
+  }
+
+  .video-card-play {
+    top: 46%;
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-50%, -50%, 0) scale(0.96);
+  }
+
+  .video-stack-card[data-position="0"] .video-card-play {
+    opacity: 0.86;
+    pointer-events: auto;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+
+  .video-stack-card[data-position="0"].is-playing .video-card-play {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-50%, -50%, 0) scale(0.9);
+  }
+
+  .client-proof-play {
+    top: 50%;
+    left: 50%;
+    width: 62px;
+    height: 62px;
+    opacity: 0.92;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+
+  .client-proof-video.is-playing .client-proof-play {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-50%, -50%, 0) scale(0.9);
+  }
+
+  .video-card-play:hover,
+  .client-proof-play:hover,
+  .video-card-play:focus-visible,
+  .client-proof-play:focus-visible {
+    background: rgba(255, 253, 247, 0.92);
+    transform: translate3d(-50%, -50%, 0) scale(1.05);
+  }
+
+  .video-card-play span,
+  .client-proof-play span {
+    width: 0;
+    height: 0;
+    margin-left: 4px;
+    border-block: 8px solid transparent;
+    border-left: 13px solid currentColor;
+  }
+
+  .client-proof-play span {
+    border-block-width: 11px;
+    border-left-width: 17px;
+  }
 }
 
 .final-section {
