@@ -12,7 +12,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000");
+function getSiteUrl() {
+  const rawUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ??
+    process.env.VERCEL_URL ??
+    "http://localhost:3000";
+
+  return rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`;
+}
+
+const siteUrl = new URL(getSiteUrl());
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,

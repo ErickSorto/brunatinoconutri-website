@@ -1004,7 +1004,7 @@ export async function generateMetadata({
       url: lang === "en" ? "/?lang=en" : "/",
       images: [
         {
-          url: "/opengraph-image.gif",
+          url: "/opengraph-image.png",
           width: 1200,
           height: 630,
           alt: "Bruna Tinoco Nutri social preview",
@@ -1015,7 +1015,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: metadata.title,
       description: metadata.description,
-      images: ["/twitter-image.gif"],
+      images: ["/twitter-image.png"],
     },
   };
 }
@@ -1245,6 +1245,14 @@ export default async function Home({
             >
               {t.videoProof.secondary}
             </a>
+          </div>
+          <div className="video-route-graphic" aria-hidden="true">
+            <Image
+              src="/generated/video-section/brazil-us-flight-infographic-tight.webp"
+              alt=""
+              fill
+              sizes="(max-width: 620px) 82vw, (max-width: 980px) 42vw, 520px"
+            />
           </div>
         </div>
         <div className="video-proof-frame reveal">
