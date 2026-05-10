@@ -12,10 +12,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: siteUrl,
   title: "Bruna Tinoco Nutri | Consultoria Nutricional",
   description:
     "Consultoria nutricional online para brasileiras que vivem nos EUA e desejam emagrecer com saúde.",
+  openGraph: {
+    title: "Bruna Tinoco Nutri | Consultoria Nutricional",
+    description:
+      "Consultoria nutricional online para brasileiras que vivem nos EUA e desejam emagrecer com saúde.",
+    siteName: "Bruna Tinoco Nutri",
+    type: "website",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bruna Tinoco Nutri | Consultoria Nutricional",
+    description:
+      "Consultoria nutricional online para brasileiras que vivem nos EUA e desejam emagrecer com saúde.",
+  },
 };
 
 export default function RootLayout({

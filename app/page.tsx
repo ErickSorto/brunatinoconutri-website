@@ -133,6 +133,10 @@ const translations = {
       },
     ],
     sevenDayAria: "Linha de progresso em 7 dias",
+    sevenDayIntro: {
+      title: "Voce sente mudanca rapido.",
+      text: "Mais humor, energia e clareza ja na primeira semana.",
+    },
     sevenDayResults: [
       {
         day: "Dia 1",
@@ -503,6 +507,10 @@ const translations = {
       },
     ],
     sevenDayAria: "7-day progress timeline",
+    sevenDayIntro: {
+      title: "You feel change fast.",
+      text: "More mood, energy, and clarity in the first week.",
+    },
     sevenDayResults: [
       {
         day: "Day 1",
@@ -975,7 +983,41 @@ export async function generateMetadata({
   searchParams?: SearchParams;
 }): Promise<Metadata> {
   const lang = resolveLang(searchParams ? await searchParams : undefined);
-  return translations[lang].metadata;
+  const metadata = translations[lang].metadata;
+  const locale = lang === "en" ? "en_US" : "pt_BR";
+
+  return {
+    ...metadata,
+    alternates: {
+      canonical: lang === "en" ? "/?lang=en" : "/",
+      languages: {
+        "pt-BR": "/?lang=pt",
+        "en-US": "/?lang=en",
+      },
+    },
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      type: "website",
+      siteName: "Bruna Tinoco Nutri",
+      locale,
+      url: lang === "en" ? "/?lang=en" : "/",
+      images: [
+        {
+          url: "/opengraph-image.gif",
+          width: 1200,
+          height: 630,
+          alt: "Bruna Tinoco Nutri social preview",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: metadata.title,
+      description: metadata.description,
+      images: ["/twitter-image.gif"],
+    },
+  };
 }
 
 export default async function Home({
@@ -1220,6 +1262,10 @@ export default async function Home({
 
       <section className="seven-day-section" id="resultados">
         <ViewportSequenceTrigger selector=".growth-story" />
+        <div className="seven-day-copy reveal">
+          <h2>{t.sevenDayIntro.title}</h2>
+          <p>{t.sevenDayIntro.text}</p>
+        </div>
         <div className="growth-story reveal" aria-label={t.sevenDayAria}>
           <div className="growth-line" aria-hidden="true" />
           <div className="growth-days">
