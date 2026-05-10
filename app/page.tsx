@@ -6,6 +6,7 @@ import BookingScheduler from "./BookingScheduler";
 import EmailOfferPopup from "./EmailOfferPopup";
 import MobileDrawerDismiss from "./MobileDrawerDismiss";
 import ReviewCarousel from "./ReviewCarousel";
+import VideoProofStack from "./VideoProofStack";
 import ViewportSequenceTrigger from "./ViewportSequenceTrigger";
 
 const whatsappPhone = "5522999595715";
@@ -106,8 +107,33 @@ const translations = {
       stats: ["Produtos certos", "Compras simples", "Plano em portugues"],
       primary: "Agendar consulta gratuita",
       secondary: "Ver reel",
+      previousVideo: "Video anterior",
+      nextVideo: "Proximo video",
       videoAria: "Reel de Bruna Tinoco sobre compras e rotina nos EUA",
       poster: "/instagram/bruna-video-thumbnail-pt-ai.webp",
+      videos: [
+        {
+          label: "Reel 01",
+          title: "Mercado dos EUA",
+          src: "/instagram/bruna-proof-us-market-hq.mp4",
+          poster: "/instagram/bruna-video-thumbnail-pt-ai.webp",
+          href: "https://www.instagram.com/p/DXE4thVEcAF/",
+        },
+        {
+          label: "Reel 02",
+          title: "Mudanca real",
+          src: "/instagram/bruna-proof-change-thays.mp4",
+          poster: "/generated/video-covers/change-real-pt-web.webp",
+          href: "https://www.instagram.com/p/DW7XXMUEq7C/",
+        },
+        {
+          label: "Reel 03",
+          title: "Produtos certos",
+          src: "/instagram/bruna-proof-products.mp4",
+          poster: "/instagram/bruna-DWPUGATCf48.webp",
+          href: "https://www.instagram.com/p/DWPUGATCf48/",
+        },
+      ],
     },
     reviews: [
       {
@@ -343,6 +369,8 @@ const translations = {
         "Tire duvidas sobre tempo, custo e flexibilidade.",
         "Ganhe 15% off se iniciar depois da consulta.",
       ],
+      clarityTitle: "Voce sai da call sabendo:",
+      clarityItems: ["Plano ideal", "Tempo realista", "Proximo passo"],
       panelKicker: "Consulta gratuita",
       panelTitle: "Escolha seu horario",
       panelText: "Selecione dia e hora. A confirmacao pode seguir por WhatsApp ou Instagram.",
@@ -367,6 +395,16 @@ const translations = {
       closePicker: "Fechar seletor",
       dateSheetTitle: "Escolha a data",
       timeSheetTitle: "Escolha o horario",
+    },
+    clientProof: {
+      kicker: "Prova final",
+      title: "Ainda nao esta convencida?",
+      text:
+        "Ouça uma cliente falar sobre o que mudou quando o plano saiu do papel e virou rotina.",
+      primary: "Agendar consulta gratuita",
+      secondary: "Ver no Instagram",
+      videoAria: "Depoimento de cliente da consultoria Bruna Tinoco",
+      poster: "/generated/client-proof/still-not-convinced-cover-web.webp",
     },
     offerModal: {
       kicker: "Oferta da consulta gratuita",
@@ -480,8 +518,33 @@ const translations = {
       stats: ["Right products", "Simple shopping", "Portuguese guidance"],
       primary: "Book a free consultation",
       secondary: "View Reel",
+      previousVideo: "Previous video",
+      nextVideo: "Next video",
       videoAria: "Bruna Tinoco Reel about grocery shopping and routine in the U.S.",
       poster: "/instagram/bruna-video-thumbnail-en-ai.webp",
+      videos: [
+        {
+          label: "Reel 01",
+          title: "U.S. groceries",
+          src: "/instagram/bruna-proof-us-market-hq.mp4",
+          poster: "/instagram/bruna-video-thumbnail-en-ai.webp",
+          href: "https://www.instagram.com/p/DXE4thVEcAF/",
+        },
+        {
+          label: "Reel 02",
+          title: "Real change",
+          src: "/instagram/bruna-proof-change-thays.mp4",
+          poster: "/generated/video-covers/change-real-en-web.webp",
+          href: "https://www.instagram.com/p/DW7XXMUEq7C/",
+        },
+        {
+          label: "Reel 03",
+          title: "Right products",
+          src: "/instagram/bruna-proof-products.mp4",
+          poster: "/instagram/bruna-DWPUGATCf48.webp",
+          href: "https://www.instagram.com/p/DWPUGATCf48/",
+        },
+      ],
     },
     reviews: [
       {
@@ -717,6 +780,8 @@ const translations = {
         "Ask about time, cost, and flexibility.",
         "Unlock 15% off if you start after the consultation.",
       ],
+      clarityTitle: "You leave the call knowing:",
+      clarityItems: ["Best plan", "Realistic timing", "Next step"],
       panelKicker: "Free consultation",
       panelTitle: "Choose your time",
       panelText: "Select a day and hour. Confirmation can continue through WhatsApp or Instagram.",
@@ -741,6 +806,16 @@ const translations = {
       closePicker: "Close picker",
       dateSheetTitle: "Choose the date",
       timeSheetTitle: "Choose the time",
+    },
+    clientProof: {
+      kicker: "Final proof",
+      title: "Still not convinced?",
+      text:
+        "Hear from a client about what changed when the plan became a real routine.",
+      primary: "Book free consultation",
+      secondary: "View on Instagram",
+      videoAria: "Client testimonial for Bruna Tinoco coaching",
+      poster: "/generated/client-proof/still-not-convinced-cover-web.webp",
     },
     offerModal: {
       kicker: "Free consultation offer",
@@ -1255,17 +1330,12 @@ export default async function Home({
             />
           </div>
         </div>
-        <div className="video-proof-frame reveal">
-          <video
-            aria-label={t.videoProof.videoAria}
-            controls
-            playsInline
-            poster={t.videoProof.poster}
-            preload="metadata"
-          >
-            <source src="/instagram/bruna-proof-us-market-hq.mp4" type="video/mp4" />
-          </video>
-        </div>
+        <VideoProofStack
+          ariaLabel={t.videoProof.videoAria}
+          nextLabel={t.videoProof.nextVideo}
+          previousLabel={t.videoProof.previousVideo}
+          videos={t.videoProof.videos}
+        />
       </section>
 
       <section className="seven-day-section" id="resultados">
@@ -1481,9 +1551,52 @@ export default async function Home({
               </span>
             ))}
           </div>
+          <div className="booking-clarity" aria-label={t.schedule.clarityTitle}>
+            <strong>{t.schedule.clarityTitle}</strong>
+            <div>
+              {t.schedule.clarityItems.map((item) => (
+                <span key={item}>
+                  <MiniIcon name="spark" />
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
         <BookingScheduler calendarRows={calendarRows} schedule={t.schedule} />
+      </section>
+
+      <section className="client-proof-section">
+        <div className="client-proof-copy reveal">
+          <p className="section-kicker">{t.clientProof.kicker}</p>
+          <h2>{t.clientProof.title}</h2>
+          <p>{t.clientProof.text}</p>
+          <div className="client-proof-actions">
+            <a className="primary-link" href="#agendar">
+              {t.clientProof.primary}
+            </a>
+            <a
+              className="text-link"
+              href="https://www.instagram.com/p/DXSDviKiT2A/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t.clientProof.secondary}
+            </a>
+          </div>
+        </div>
+        <div className="client-proof-video reveal">
+          <video
+            aria-label={t.clientProof.videoAria}
+            controls
+            playsInline
+            poster={t.clientProof.poster}
+            preload="metadata"
+          >
+            <source src="/instagram/bruna-client-proof-dxsd.mp4" type="video/mp4" />
+          </video>
+        </div>
       </section>
 
       <section className="final-section" id="contato">
