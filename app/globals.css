@@ -5136,16 +5136,15 @@ select {
   }
 
   .gallery-board {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     min-height: auto;
     gap: 12px;
     margin-top: 28px;
-    margin-inline: -16px;
-    overflow-x: auto;
-    padding: 0 16px 10px;
-    scroll-padding-inline: 16px;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+    margin-inline: 0;
+    overflow: visible;
+    padding: 0;
+    width: 100%;
   }
 
   .gallery-board::-webkit-scrollbar {
@@ -5153,12 +5152,11 @@ select {
   }
 
   .gallery-tile {
-    width: min(68vw, 286px);
-    min-width: min(68vw, 286px);
+    width: 100%;
+    min-width: 0;
     height: auto;
     aspect-ratio: 2 / 3;
     min-height: 0;
-    scroll-snap-align: start;
   }
 
   .post-card.gallery-tile {
