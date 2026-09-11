@@ -5673,3 +5673,12 @@ select {
     height: min(88%, 540px);
   }
 }
+
+/* Entry to the dedicated consultation booking experience. */
+.booking-entry-section { display: flex; align-items: center; gap: clamp(24px, 5vw, 70px); padding: 65px var(--page-gutter); background: var(--sage-50); }
+.booking-entry-section > img { width: clamp(120px, 18vw, 230px); height: 300px; object-fit: cover; object-position: top; border-radius: 120px 120px 8px 8px; background: var(--sage-100); }
+.booking-entry-section > div { max-width: 720px; }
+.booking-entry-section h2 { margin: 10px 0 15px; font: 400 clamp(30px, 4vw, 54px)/1.08 Georgia, serif; color: var(--forest); letter-spacing: -.04em; }
+.booking-entry-section > div > p:not(.section-kicker) { font-size: 14px; line-height: 1.8; color: var(--ink-soft); }
+.booking-entry-section .primary-link { display: inline-flex; margin-top: 24px; }
+@media (max-width: 620px) { .booking-entry-section { padding-block: 40px; gap: 20px; align-items: flex-start; } .booking-entry-section > img { width: 75px; height: 100px; border-radius: 50px 50px 6px 6px; } .booking-entry-section > div { min-width: 0; } .booking-entry-section h2 { font-size: 30px; } .booking-entry-section > div > p:not(.section-kicker) { font-size: 12px; } .booking-entry-section .primary-link { font-size: 10px; padding: 14px; } }

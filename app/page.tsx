@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import BookingScheduler from "./BookingScheduler";
 import ClientProofVideo from "./ClientProofVideo";
 import EmailOfferPopup from "./EmailOfferPopup";
 import MobileDrawerDismiss from "./MobileDrawerDismiss";
@@ -222,8 +221,6 @@ const translations = {
           name: "Gold",
           duration: "03 meses",
           rhythm: "Trimestral",
-          brl: "R$ 2.000",
-          usd: "$375",
           note: "Para organizar rotina, escolhas e constancia com direcao clara.",
           featured: false,
           features: [
@@ -237,8 +234,6 @@ const translations = {
           name: "Diamond",
           duration: "06 meses",
           rhythm: "Semestral",
-          brl: "R$ 3.200",
-          usd: "$600",
           note: "Para quem quer mais tempo de ajuste, suporte e acompanhamento.",
           featured: true,
           features: [
@@ -252,8 +247,6 @@ const translations = {
           name: "Platinum",
           duration: "12 meses",
           rhythm: "Anual",
-          brl: "R$ 5.000",
-          usd: "$940",
           note: "A jornada mais completa para sustentar mudancas com tranquilidade.",
           featured: false,
           features: [
@@ -633,8 +626,6 @@ const translations = {
           name: "Gold",
           duration: "03 months",
           rhythm: "Quarterly",
-          brl: "R$ 2.000",
-          usd: "$375",
           note: "For organizing your routine, choices, and consistency with clear direction.",
           featured: false,
           features: [
@@ -648,8 +639,6 @@ const translations = {
           name: "Diamond",
           duration: "06 months",
           rhythm: "Semiannual",
-          brl: "R$ 3.200",
-          usd: "$600",
           note: "For those who want more time for adjustments, support, and follow-up.",
           featured: true,
           features: [
@@ -663,8 +652,6 @@ const translations = {
           name: "Platinum",
           duration: "12 months",
           rhythm: "Annual",
-          brl: "R$ 5.000",
-          usd: "$940",
           note: "The most complete journey for sustaining changes with confidence.",
           featured: false,
           features: [
@@ -902,63 +889,6 @@ const iconPaths = {
 
 type IconName = keyof typeof iconPaths;
 
-const calendarRows = [
-  [
-    { label: "26", state: "muted" },
-    { label: "27", state: "muted" },
-    { label: "28", state: "muted" },
-    { label: "29", state: "muted" },
-    { label: "30", state: "muted" },
-    { label: "1", state: "muted" },
-    { label: "2", state: "muted" },
-  ],
-  [
-    { label: "3", state: "muted" },
-    { label: "4", state: "muted" },
-    { label: "5", state: "muted" },
-    { label: "6", state: "muted" },
-    { label: "7", state: "muted" },
-    { label: "8", state: "muted" },
-    { label: "9", state: "muted" },
-  ],
-  [
-    { label: "10", state: "muted" },
-    { label: "11" },
-    { label: "12" },
-    { label: "13" },
-    { label: "14" },
-    { label: "15" },
-    { label: "16", state: "muted" },
-  ],
-  [
-    { label: "17", state: "muted" },
-    { label: "18" },
-    { label: "19" },
-    { label: "20" },
-    { label: "21" },
-    { label: "22", state: "selected" },
-    { label: "23", state: "muted" },
-  ],
-  [
-    { label: "24", state: "muted" },
-    { label: "25" },
-    { label: "26" },
-    { label: "27" },
-    { label: "28" },
-    { label: "29" },
-    { label: "30", state: "muted" },
-  ],
-  [
-    { label: "31", state: "muted" },
-    { label: "1", state: "muted" },
-    { label: "2", state: "muted" },
-    { label: "3", state: "muted" },
-    { label: "4", state: "muted" },
-    { label: "5", state: "muted" },
-    { label: "6", state: "muted" },
-  ],
-] as const;
-
 function MiniIcon({ name }: { name: IconName }) {
   return (
     <svg className="mini-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -1127,7 +1057,7 @@ export default async function Home({
               <span>WhatsApp</span>
             </a>
           </div>
-          <a className="announcement-center" href="#agendar">
+          <a className="announcement-center" href={lang === "en" ? "/booking?lang=en" : "/booking"}>
             {t.announcement}
             <span aria-hidden="true">-&gt;</span>
           </a>
@@ -1156,7 +1086,7 @@ export default async function Home({
 
           <div className="nav-actions">
             <LanguageToggle lang={lang} />
-            <a className="nav-cta" href="#agendar">
+            <a className="nav-cta" href={lang === "en" ? "/booking?lang=en" : "/booking"}>
               {t.navCta}
             </a>
             <label className="menu-button" htmlFor="mobile-drawer" aria-label={t.openMenuAria}>
@@ -1187,7 +1117,7 @@ export default async function Home({
             <p>{t.drawerLanguage}</p>
             <LanguageToggle compact lang={lang} />
           </div>
-          <a className="drawer-cta" href="#agendar">
+          <a className="drawer-cta" href={lang === "en" ? "/booking?lang=en" : "/booking"}>
             {t.drawerCta}
           </a>
           <div className="drawer-socials">
@@ -1220,7 +1150,7 @@ export default async function Home({
             </h1>
             <p>{t.hero.text}</p>
             <div className="hero-actions">
-              <a className="primary-link" href="#agendar">
+              <a className="primary-link" href={lang === "en" ? "/booking?lang=en" : "/booking"}>
                 {t.hero.primary}
               </a>
               <a
@@ -1310,7 +1240,7 @@ export default async function Home({
             ))}
           </div>
           <div className="video-proof-actions">
-            <a className="primary-link" href="#agendar">
+            <a className="primary-link" href={lang === "en" ? "/booking?lang=en" : "/booking"}>
               {t.videoProof.primary}
             </a>
             <a
@@ -1412,8 +1342,6 @@ export default async function Home({
               <p>{plan.note}</p>
               <div className="plan-price">
                 <span>{plan.duration}</span>
-                <strong>{plan.brl}</strong>
-                <em>{plan.usd}</em>
               </div>
               <ul>
                 {plan.features.map((feature) => (
@@ -1423,7 +1351,7 @@ export default async function Home({
                   </li>
                 ))}
               </ul>
-              <a className="plan-action" href="#agendar">
+              <a className="plan-action" href={lang === "en" ? "/booking?lang=en" : "/booking"}>
                 {t.plans.choose} {plan.name}
                 <MiniIcon name="trend" />
               </a>
@@ -1539,33 +1467,14 @@ export default async function Home({
         </div>
       </section>
 
-      <section className="booking-section" id="agendar">
-        <div className="booking-copy reveal">
+      <section className="booking-entry-section" id="agendar">
+        <Image src="/bruna-pdf/bruna-hero-grounded.webp" alt="Bruna Tinoco" width={180} height={240} />
+        <div>
           <p className="section-kicker">{t.schedule.kicker}</p>
-          <h2>{t.schedule.title}</h2>
-          <p>{t.schedule.text}</p>
-          <div className="booking-perks">
-            {t.schedule.perks.map((perk) => (
-              <span key={perk}>
-                <MiniIcon name="check" />
-                {perk}
-              </span>
-            ))}
-          </div>
-          <div className="booking-clarity" aria-label={t.schedule.clarityTitle}>
-            <strong>{t.schedule.clarityTitle}</strong>
-            <div>
-              {t.schedule.clarityItems.map((item) => (
-                <span key={item}>
-                  <MiniIcon name="spark" />
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
+          <h2>{lang === "pt" ? "Uma hora para você. Um novo começo." : "An hour for you. A fresh beginning."}</h2>
+          <p>{lang === "pt" ? "No Brasil ou nos EUA, seu primeiro passo é uma conversa gratuita de 60 minutos com a Bruna." : "In Brazil or the U.S., start with a free, one-to-one 60-minute conversation with Bruna."}</p>
+          <Link className="primary-link" href={lang === "en" ? "/booking?lang=en" : "/booking"}>{t.hero.primary}<MiniIcon name="calendar" /></Link>
         </div>
-
-        <BookingScheduler calendarRows={calendarRows} schedule={t.schedule} />
       </section>
 
       <section className="client-proof-section">
@@ -1574,7 +1483,7 @@ export default async function Home({
           <h2>{t.clientProof.title}</h2>
           <p>{t.clientProof.text}</p>
           <div className="client-proof-actions">
-            <a className="primary-link" href="#agendar">
+            <a className="primary-link" href={lang === "en" ? "/booking?lang=en" : "/booking"}>
               {t.clientProof.primary}
             </a>
             <a
@@ -1615,7 +1524,7 @@ export default async function Home({
           <h2>{t.final.title}</h2>
           <a
             className="primary-link"
-            href="#agendar"
+            href={lang === "en" ? "/booking?lang=en" : "/booking"}
           >
             {t.final.cta}
           </a>
