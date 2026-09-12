@@ -10,7 +10,7 @@ import type { Lang } from "./copy";
 const stories = [
   { id: "da6", src: "/instagram/bruna-da6.mp4", image: "/generated/booking/thays-portrait.webp", href: "https://www.instagram.com/p/Da6T8I3SDlx/", name: "Thays", location: { pt: "Havaí", en: "Hawaii" }, pt: "Uma nova fase. Com apoio.", en: "A new chapter. With support." },
   { id: "market", src: "/instagram/bruna-proof-us-market-hq.mp4", image: "/generated/booking/market-portrait.webp", href: "https://www.instagram.com/p/DXE4thVEcAF/", name: "Brasil → EUA", pt: "Sua comida. Sua nova rotina.", en: "Your food. Your new routine." },
-  { id: "dub", src: "/instagram/bruna-dub.mp4", image: "/instagram/bruna-dub-frame.jpg", href: "https://www.instagram.com/p/DUbfnvED-rO/", name: "Nina · Flórida", pt: "De perto, mesmo de longe.", en: "Personal care, from afar." },
+  { id: "dub", src: "/instagram/bruna-dub.mp4", image: "/instagram/bruna-dub-frame.webp", href: "https://www.instagram.com/p/DUbfnvED-rO/", name: "Nina · Flórida", pt: "De perto, mesmo de longe.", en: "Personal care, from afar." },
 ];
 
 export default function USVideoStories({ lang, onBook }: { lang: Lang; onBook: () => void }) {
@@ -58,7 +58,7 @@ export default function USVideoStories({ lang, onBook }: { lang: Lang; onBook: (
     }}>
       {stories.map((story, index) => <article className="bk-us-video-card" key={story.id}>
         <div className={`bk-us-video-stage${playing === index ? " is-playing" : ""}`}>
-          <video ref={node => { players.current[index] = node; }} src={story.src} preload="none" playsInline controls={playing === index} poster={story.image} aria-label={english ? story.en : story.pt} onPlay={event => { alignPlayback(index); scrollVideoIntoView(event.currentTarget); players.current.forEach((player, other) => { if (other !== index) player?.pause(); }); setPlaying(index); }} onEnded={() => setPlaying(null)} onError={() => setFailed(index)} />
+          <video ref={node => { players.current[index] = node; }} src={story.src} preload="none" playsInline controls={playing === index} aria-label={english ? story.en : story.pt} onPlay={event => { alignPlayback(index); scrollVideoIntoView(event.currentTarget); players.current.forEach((player, other) => { if (other !== index) player?.pause(); }); setPlaying(index); }} onEnded={() => setPlaying(null)} onError={() => setFailed(index)} />
           {playing !== index && <button type="button" className="bk-us-video-cover" onClick={() => { setFailed(null); players.current[index]?.play().catch(() => setFailed(index)); }} aria-label={`${english ? "Watch" : "Assistir"}: ${english ? story.en : story.pt}`}>
             <Image className="bk-us-cover-art" src="/generated/booking/video-story-art.webp" alt="" fill sizes="(max-width:760px) 85vw, 380px" />
             <span className="bk-us-cover-top"><Image src="/bruna-logo.webp" alt="" width={150} height={59} /><span>{english ? "Real story" : "História real"}</span></span>
