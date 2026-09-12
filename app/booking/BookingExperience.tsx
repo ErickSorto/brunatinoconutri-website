@@ -38,6 +38,7 @@ function ProofVideo({ lang, english }: { lang: Lang; english: boolean }) {
 export default function BookingExperience({ initialLang }: { initialLang: Lang }) {
   const [lang, setLang] = useState<Lang>(initialLang);
   const [step, setStep] = useState(0);
+  const [languagePreference, setLanguagePreference] = useState<Lang | null>(null);
   const [selection, setSelection] = useState<TimeSelection | null>(null);
   const [audience, setAudience] = useState<Audience>("brazil-us");
   const [details, setDetails] = useState<ConsultationDetails>({ name: "", email: "", phone: "", language: initialLang, goals: [] });
@@ -52,7 +53,7 @@ export default function BookingExperience({ initialLang }: { initialLang: Lang }
   useEffect(() => {
     document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
     const url = new URL(window.location.href);
-    if (lang === "en") url.searchParams.set("lang", "en"); else url.searchParams.delete("lang");
+    url.searchParams.set("lang", lang);
     window.history.replaceState(null, "", url);
     return () => { document.documentElement.lang = "pt-BR"; };
   }, [lang]);
@@ -63,11 +64,18 @@ export default function BookingExperience({ initialLang }: { initialLang: Lang }
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [step]);
 
-  function chooseAudience(value: Audience) {
-    setAudience(value);
-    const language = value === "international" ? "en" : "pt";
+  useEffect(() => {
+    if (languagePreference) document.cookie = `booking-language=${languagePreference}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  }, [languagePreference]);
+
+  function chooseLanguage(language: Lang) {
     setLang(language);
     setDetails(current => ({ ...current, language }));
+    setLanguagePreference(language);
+  }
+
+  function chooseAudience(value: Audience) {
+    setAudience(value);
     setStep(1);
   }
 
@@ -87,7 +95,7 @@ export default function BookingExperience({ initialLang }: { initialLang: Lang }
     <header className="bk-header">
       <Link className="bk-logo" href={lang === "pt" ? "/" : "/?lang=en"} aria-label="Bruna Tinoco Nutri"><Image src="/bruna-logo.webp" alt="Bruna Tinoco Nutri" width={184} height={72} loading="eager" /></Link>
       <span className="bk-header-note"><Icon name="leaf" />{t.footer}</span>
-      <div className="bk-header-actions"><div className="bk-language" aria-label={t.language}>{(["pt", "en"] as const).map(value => <button type="button" key={value} onClick={() => setLang(value)} aria-pressed={lang === value} aria-label={value === "pt" ? "Português" : "English"}>{value.toUpperCase()}</button>)}</div></div>
+      <div className="bk-header-actions"><div className="bk-language" aria-label={t.language}>{(["pt", "en"] as const).map(value => <button type="button" key={value} onClick={() => chooseLanguage(value)} aria-pressed={lang === value} aria-label={value === "pt" ? "Português" : "English"}><span className="bk-language-flag" aria-hidden="true">{value === "pt" ? "🇧🇷" : "🇺🇸"}</span><span>{value.toUpperCase()}</span></button>)}</div></div>
     </header>
 
     <nav className="bk-progress" aria-label={t.progress} data-step={step}>

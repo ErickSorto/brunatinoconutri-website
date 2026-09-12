@@ -10,8 +10,9 @@ export async function GET(request: NextRequest) {
     await rateLimit(request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown", "read");
     return NextResponse.json(await availability(request.nextUrl.searchParams.get("month") || "", request.nextUrl.searchParams.get("timeZone") || ""), { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    // Local preview only: demo availability never enables booking writes.
-    if (process.env.NODE_ENV === "development" && error instanceof BookingError && error.code === "not_configured") {
+    // Allow Bruna to test on the hosted site until providers are configured.
+    // Set BOOKING_PREVIEW_ENABLED=false to disable this fallback; writes stay protected.
+    if (process.env.BOOKING_PREVIEW_ENABLED !== "false" && error instanceof BookingError && error.code === "not_configured") {
       const month = request.nextUrl.searchParams.get("month") || "";
       const timeZone = request.nextUrl.searchParams.get("timeZone") || "";
       try {

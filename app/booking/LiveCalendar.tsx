@@ -148,7 +148,7 @@ export default function LiveCalendar({ lang, audience, details, onBack, onBooked
       {slot && <div className="bk-selected-summary"><span>{c.selected}</span><strong>{formatFull(slot)}</strong>{t.minutes} · Zoom · {t.free}<br />{timeZone}</div>}
       {submitError && <p className="bk-error" role="alert">{submitError}</p>}
       {uncertain ? <a className="bk-primary" href={helpLink} target="_blank" rel="noreferrer">{t.help}<Icon name="arrow" /></a> : <button type="button" className="bk-primary bk-calendar-submit" disabled={!slot || submitting || data.status !== "ready"} onClick={reserve}><Icon name="calendar" /><span>{submitting ? c.confirming : (lang === "pt" ? "Continuar com este horário" : "Continue with this time")}</span><Icon name="check" /></button>}
-      <p className="bk-privacy">{data.demo ? (lang === "pt" ? "Demonstração local · sem e-mail ou reunião Zoom." : "Local preview · no email or Zoom meeting.") : c.emailNote}</p>
+      <p className="bk-privacy">{data.demo ? (lang === "pt" ? "Demonstração · sem e-mail ou reunião Zoom." : "Preview · no email or Zoom meeting.") : c.emailNote}</p>
     </>}
     </>}
   </div>;

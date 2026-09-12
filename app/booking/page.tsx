@@ -1,11 +1,24 @@
 import type { Metadata } from "next";
+import { cookies, headers } from "next/headers";
 import BookingExperience from "./BookingExperience";
 import "./booking.css";
 
 type Props = { searchParams: Promise<{ lang?: string | string[] }> };
 
+async function resolveLanguage(searchParams: Props["searchParams"]): Promise<"pt" | "en"> {
+  const [params, cookieStore, requestHeaders] = await Promise.all([searchParams, cookies(), headers()]);
+  if (params.lang === "pt" || params.lang === "en") return params.lang;
+  const saved = cookieStore.get("booking-language")?.value;
+  if (saved === "pt" || saved === "en") return saved;
+  const languages = (requestHeaders.get("accept-language") || "").split(",")
+    .map(value => { const [tag, weight] = value.trim().split(";"); return { tag: tag.toLowerCase().split("-")[0], weight: weight?.startsWith("q=") ? Number(weight.slice(2)) : 1 }; })
+    .filter(value => value.weight > 0 && (value.tag === "pt" || value.tag === "en"))
+    .sort((a, b) => b.weight - a.weight);
+  return languages[0]?.tag === "pt" ? "pt" : "en";
+}
+
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const en = (await searchParams).lang === "en";
+  const en = await resolveLanguage(searchParams) === "en";
   const title = en
     ? "Your free 1-hour consultation | Bruna Tinoco Nutri"
     : "Sua consulta gratuita de 1 hora | Bruna Tinoco Nutri";
@@ -22,6 +35,6 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function BookingPage({ searchParams }: Props) {
-  const lang = (await searchParams).lang === "en" ? "en" : "pt";
+  const lang = await resolveLanguage(searchParams);
   return <BookingExperience initialLang={lang} />;
 }
