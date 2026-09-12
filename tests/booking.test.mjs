@@ -81,7 +81,6 @@ test('lead time, horizon, month and input validation reject invalid requests', (
   assert.throws(() => monthRange('2026-13'), /invalid_month/);
   assert.throws(() => booking({ email: 'invalid' }), /invalid_details/);
   assert.throws(() => booking({ phone: 'abc' }), /invalid_details/);
-  assert.throws(() => booking({ phone: '' }), /invalid_details/);
   assert.throws(() => booking({ name: '<script>test' }), /invalid_details/);
   assert.throws(() => booking({ goal: 4 }), /invalid_details/);
   assert.throws(() => booking({ timeZone: 'Mars/Test' }), /invalid_details/);
@@ -169,4 +168,19 @@ test('missing credentials cannot create a booking or expose fake availability', 
   }
   await reserveConsultation(input);
   assert.match([...events.values()][0].description, /Focus: Everyday eating routine; Relationship with food/);
+});
+
+test('phone is optional but supplied malformed values are rejected', () => {
+  assert.equal(booking({ phone: '' }).phone, '');
+  assert.equal(booking({ phone: undefined }).phone, '');
+  for (const phone of ['abc', '123', '<script>', '1'.repeat(31), 5551234567]) {
+    assert.throws(() => booking({ phone }), /invalid_details/);
+  }
+});
+
+test('a reservation succeeds without a phone number', async () => {
+  const result = await reserveConsultation(booking({ phone: '' }));
+  assert.equal(result.status, 'confirmed');
+  assert.equal(invitations, 1);
+  assert.equal(zoomMeetings, 1);
 });

@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import BookingFeedback from "./BookingFeedback";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { copy, type Audience, type Lang } from "./copy";
 import type { ConsultationDetails } from "./BookingExperience";
 import { Icon } from "./Icon";
 
+export type TimeSelection = { slot: string; timeZone: string; demo: boolean };
 type Confirmation = { status: "confirmed"; startsAt: string; endsAt: string; joinUrl: string; reference: string };
 type LoadState = { status: "loading" | "ready" | "error"; slots: string[]; error: string; demo?: boolean };
 const zones = ["America/New_York", "America/Chicago", "America/Denver", "America/Phoenix", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu", "America/Sao_Paulo", "America/Manaus", "America/Rio_Branco", "Europe/Lisbon", "Europe/London"];
@@ -18,17 +21,19 @@ const ui = {
   en: { zone: "Your time zone", previous: "Previous month", next: "Next month", chooseDay: "Choose a date to see available times.", chooseTime: "Available times", noSlots: "No open times this month. Try next month or contact Bruna.", retry: "Try again", loadError: "We couldn’t check the calendar right now.", unavailableDay: "no available times", selected: "Your consultation", confirm: "Confirm my free hour", confirming: "Reserving your time and creating your Zoom link…", emailNote: "By confirming, your name and email will be used to send your consultation invitation through Google Calendar. Your Zoom link will be included.", bookedTitle: "Your fresh beginning is booked.", bookedText: "Your consultation is reserved. Google Calendar will send the invitation to", join: "Open my Zoom room", download: "Add to my calendar (.ics)", reschedule: "Reschedule or cancel", reference: "Reference", conflict: "That time has just become unavailable. Please choose another time.", pending: "We need to check your reservation. Please don’t make another request: contact Bruna below to confirm your time.", submitError: "We couldn’t complete your booking. Try again; if the connection dropped, we’ll check the same request before creating another.", weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] },
 } as const;
 
-export default function LiveCalendar({ lang, audience, details, onBack, onBooked, onLock }: { lang: Lang; audience: Audience; details: ConsultationDetails; onBack: () => void; onBooked: () => void; onLock: (locked: boolean) => void }) {
+export default function LiveCalendar({ lang, audience, details, onBack, onBooked, onLock, mode, initialSelection, onContinue, renderDetails, detailsReady }: { lang: Lang; audience: Audience; details: ConsultationDetails; onBack: () => void; onBooked: () => void; onLock: (locked: boolean) => void; mode: "pick" | "details"; initialSelection: TimeSelection | null; onContinue: (value: TimeSelection) => void; renderDetails: (confirm: () => void) => ReactNode; detailsReady: boolean }) {
   const t = copy[lang], c = ui[lang];
   const locale = lang === "pt" ? "pt-BR" : "en-US";
-  const [timeZone, setTimeZone] = useState(() => Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York");
-  const [month, setMonth] = useState(() => dateKey(new Date(), timeZone).slice(0, 7));
-  const [day, setDay] = useState("");
-  const [slot, setSlot] = useState("");
-  const [data, setData] = useState<LoadState>({ status: "loading", slots: [], error: "" });
+  const [timeZone, setTimeZone] = useState(() => initialSelection?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York");
+  const [month, setMonth] = useState(() => dateKey(initialSelection ? new Date(initialSelection.slot) : new Date(), timeZone).slice(0, 7));
+  const [day, setDay] = useState(initialSelection ? dateKey(new Date(initialSelection.slot), timeZone) : "");
+  const [slot, setSlot] = useState(initialSelection?.slot || "");
+  const [data, setData] = useState<LoadState>({ status: mode === "details" ? "ready" : "loading", slots: [], error: "", demo: initialSelection?.demo });
   const [reload, setReload] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [celebrating, setCelebrating] = useState(false);
+  const reserveLock = useRef(false);
   const [demoConfirmed, setDemoConfirmed] = useState(false);
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const [uncertain, setUncertain] = useState(false);
@@ -36,24 +41,31 @@ export default function LiveCalendar({ lang, audience, details, onBack, onBooked
   const [openedAt] = useState(() => Date.now());
   const request = useRef<{ id: string; payload: string } | null>(null);
   const confirmationHeading = useRef<HTMLHeadingElement>(null);
+  const calendarHeading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { if (mode === "pick") calendarHeading.current?.focus({ preventScroll: true }); }, [mode]);
 
   useEffect(() => {
   
 
-  if (confirmation) return;
+  if (confirmation || mode === "details") return;
     const abort = new AbortController();
     const timeout = setTimeout(() => abort.abort(), 20_000);
     let active = true;
     fetch(`/api/booking/availability?${new URLSearchParams({ month, timeZone })}`, { signal: abort.signal, cache: "no-store" })
       .then(async response => { const body = await response.json(); if (!response.ok) throw new Error(body.error || "provider_unavailable"); return body; })
-      .then(body => { if (active) setData({ status: "ready", slots: body.slots, error: "", demo: body.demo === true }); })
+      .then(body => { if (active) { setData({ status: "ready", slots: body.slots, error: "", demo: body.demo === true }); setSlot(current => body.slots.includes(current) ? current : ""); if (body.slots.length) setDay(current => current && body.slots.some((value: string) => dateKey(new Date(value), timeZone) === current) ? current : dateKey(new Date(body.slots[0]), timeZone)); } })
       .catch(error => { if (active) setData({ status: "error", slots: [], error: error instanceof Error ? error.message : "provider_unavailable" }); })
       .finally(() => clearTimeout(timeout));
     return () => { active = false; clearTimeout(timeout); abort.abort(); };
-  }, [month, timeZone, reload, confirmation]);
+  }, [month, timeZone, reload, confirmation, mode]);
 
-  useEffect(() => { if (confirmation || demoConfirmed) confirmationHeading.current?.focus(); }, [confirmation, demoConfirmed]);
-  useEffect(() => { onLock(submitting || uncertain); }, [submitting, uncertain, onLock]);
+  useEffect(() => { if (!celebrating && (confirmation || demoConfirmed)) confirmationHeading.current?.focus(); }, [confirmation, demoConfirmed, celebrating]);
+  useEffect(() => {
+    if (!celebrating) return;
+    const timer = window.setTimeout(() => setCelebrating(false), 2400);
+    return () => window.clearTimeout(timer);
+  }, [celebrating]);
+  useEffect(() => { onLock(submitting || uncertain || celebrating); }, [submitting, uncertain, celebrating, onLock]);
 
   const availableByDay = useMemo(() => {
     const result: Record<string, string[]> = {};
@@ -79,9 +91,12 @@ export default function LiveCalendar({ lang, audience, details, onBack, onBooked
   }
 
   async function reserve() {
-    if (!slot || submitting || uncertain) return;
-    if (data.demo) { setDemoConfirmed(true); return; }
-    const body = { ...details, name: details.name.trim(), email: details.email.trim(), audience, startsAt: slot, timeZone };
+    if (!slot || reserveLock.current || submitting || uncertain || celebrating || data.status !== "ready") return;
+    if (mode === "pick") { onContinue({ slot, timeZone, demo: Boolean(data.demo) }); return; }
+    if (!detailsReady) return;
+    reserveLock.current = true;
+    if (data.demo) { setDemoConfirmed(true); setCelebrating(true); onBooked(); return; }
+    const body = { ...details, name: details.name.trim(), email: details.email.trim(), phone: details.phone.trim(), audience, startsAt: slot, timeZone };
     const payload = JSON.stringify(body);
     if (request.current?.payload !== payload) request.current = { id: crypto.randomUUID(), payload };
     setSubmitting(true); setSubmitError("");
@@ -89,15 +104,17 @@ export default function LiveCalendar({ lang, audience, details, onBack, onBooked
       const response = await fetch("/api/booking", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...body, requestId: request.current.id }), signal: AbortSignal.timeout(65_000) });
       const result = await response.json();
       if (!response.ok) {
-        if (result.error === "slot_taken") { setSlot(""); setReload(value => value + 1); throw new Error(c.conflict); }
+        if (result.error === "slot_taken") { onBack(); throw new Error(c.conflict); }
         if (result.error === "needs_attention") { setUncertainId(request.current.id); setUncertain(true); throw new Error(c.pending); }
         throw new Error(c.submitError);
       }
       if (result.status !== "confirmed" || !result.joinUrl) throw new Error(c.submitError);
-      setConfirmation(result); onBooked();
+      setConfirmation(result); setCelebrating(true); onBooked();
     } catch (error) { setSubmitError(error instanceof Error && error.name !== "TimeoutError" && error.name !== "TypeError" ? error.message : c.submitError); }
-    finally { setSubmitting(false); }
+    finally { setSubmitting(false); reserveLock.current = false; }
   }
+
+  if (celebrating) return <BookingFeedback lang={lang} success preview={demoConfirmed} />;
 
   if (demoConfirmed || confirmation) {
     const startsAt = confirmation?.startsAt || slot;
@@ -113,7 +130,14 @@ export default function LiveCalendar({ lang, audience, details, onBack, onBooked
     </section>;
   }
 
-  return <div className="bk-live-calendar">
+  // The render prop wires reserve to form submission; it never calls it during render.
+  // eslint-disable-next-line react-hooks/refs
+  const detailsContent = mode === "details" ? renderDetails(reserve) : null;
+  return <div className={`bk-live-calendar${slot ? " bk-has-confirm-bar" : ""}`}>
+    {submitting && <BookingFeedback lang={lang} success={false} preview={false} />}
+    {slot && !uncertain && data.status === "ready" && (mode === "pick" || detailsReady) && createPortal(<div className="bk-confirm-bar" aria-label={lang === "pt" ? "Confirmar horário escolhido" : "Confirm selected time"}><div className="bk-confirm-bar-summary"><Icon name="calendar" /><div><strong>{new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", timeZone }).format(new Date(slot))} · {formatTime(slot)}</strong><small>{timeZone.replaceAll("_", " ")} · {t.minutes}</small></div></div><button type={mode === "details" ? "submit" : "button"} form={mode === "details" ? "bk-contact-form" : undefined} className="bk-primary" disabled={submitting || (mode === "details" && !detailsReady)} onClick={mode === "pick" ? reserve : undefined}><Icon name="calendar" /><span>{submitting ? (lang === "pt" ? "Confirmando…" : "Confirming…") : mode === "pick" ? (lang === "pt" ? "Continuar com este horário" : "Continue with this time") : (lang === "pt" ? "Confirmar horário" : "Confirm booking")}</span><Icon name="check" /></button>{data.demo && <small className="bk-confirm-demo">{lang === "pt" ? "Demonstração · sem reserva real" : "Preview · no real booking"}</small>}</div>, document.querySelector(".bk-page") || document.body)}
+    {mode === "details" && <><div className="bk-details-appointment"><Icon name="calendar" /><div><strong>{formatFull(slot)}</strong><small>{timeZone.replaceAll("_", " ")} · {t.minutes}</small></div><button type="button" className="bk-back" disabled={submitting || uncertain} onClick={onBack}>{lang === "pt" ? "Alterar" : "Change"}</button></div>{detailsContent}{submitError && <p className="bk-error" role="alert">{submitError}</p>}{uncertain && <a className="bk-primary" href={helpLink}>{t.help}</a>}</>}
+    {mode === "pick" && <><h1 ref={calendarHeading} tabIndex={-1} className="bk-calendar-heading">{t.calendarTitle}</h1>
     <p className="bk-calendar-intro">{data.demo ? (lang === "pt" ? "Modo demonstração: escolha uma data e um horário para testar. Nenhuma reserva real será feita." : "Demo mode: choose a date and time to try the flow. No real booking will be made.") : data.error === "not_configured" ? t.noPayment : (lang === "pt" ? "Horários da Bruna em tempo real. Escolha o seu e receba o convite com o link Zoom." : "Bruna’s availability, in real time. Choose your time and receive an invitation with your Zoom link.")}</p>
     {data.status === "error" && data.error === "not_configured" ? <div className="bk-calendar-unavailable"><div className="bk-calendar-preview" aria-label={lang === "pt" ? "Calendário — agendamento online indisponível no momento" : "Calendar — online scheduling currently unavailable"}><div className="bk-month"><Icon name="calendar" /><strong>{monthLabel}</strong></div><div className="bk-calendar-grid">{c.weekdays.map(label => <span key={label} className="bk-weekday">{label}</span>)}{Array.from({length: firstWeekday}, (_, index) => <span key={`empty-${index}`} />)}{Array.from({length: daysInMonth}, (_, index) => <button key={index} type="button" className="bk-day" disabled aria-label={`${index + 1} ${monthLabel} — ${lang === "pt" ? "agendamento indisponível" : "scheduling unavailable"}`}>{index + 1}</button>)}</div><div className="bk-time-empty bk-time-offline"><Icon name="clock" /><strong>{c.chooseTime}</strong><p>{lang === "pt" ? "Os horários aparecerão aqui quando a agenda estiver disponível." : "Times will appear here when online scheduling is available."}</p><span>{t.minutes} · Zoom</span></div><p className="bk-calendar-preview-note">{lang === "pt" ? "Agendamento online indisponível no momento." : "Online scheduling is currently unavailable."}</p></div><h2>{t.unavailableTitle}</h2><p>{t.unavailableText}</p><dl className="bk-request-summary"><div><dt>{lang === "pt" ? "Nome" : "Name"}</dt><dd>{details.name}</dd></div><div><dt>E-mail</dt><dd>{details.email}</dd></div><div><dt>{lang === "pt" ? "Idioma" : "Language"}</dt><dd>{details.language === "pt" ? t.portuguese : t.english}</dd></div>{details.goals.length > 0 && <div><dt>{lang === "pt" ? "Interesses" : "Interests"}</dt><dd>{details.goals.map(goal => t.goals[goal]).join(" · ")}</dd></div>}</dl><p className="bk-privacy">{t.shareNote}</p><a className="bk-primary" href={helpLink} target="_blank" rel="noreferrer"><Icon name="whatsapp" /><span>{t.contact}</span></a><p className="bk-privacy">{t.contactNote}</p><button type="button" className="bk-back" onClick={onBack}>← {t.edit}</button></div> : <>
       <label className="bk-timezone" htmlFor="bk-timezone"><Icon name="globe" />{c.zone}<select id="bk-timezone" disabled={submitting || uncertain} value={timeZone} onChange={event => { setTimeZone(event.target.value); setDay(""); setSlot(""); setData({ status: "loading", slots: [], error: "" }); }}>{[...new Set([timeZone, ...zones])].map(zone => <option key={zone} value={zone}>{zone.replaceAll("_", " ").replaceAll("/", " / ")}</option>)}</select></label>
@@ -123,8 +147,9 @@ export default function LiveCalendar({ lang, audience, details, onBack, onBooked
       {data.status === "ready" && (day && availableByDay[day]?.length ? <fieldset className="bk-times" disabled={submitting || uncertain}><legend><Icon name="clock" />{c.chooseTime}</legend><p className="bk-chosen-day">{new Intl.DateTimeFormat(locale, { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`))}</p><div className="bk-time-grid">{availableByDay[day].map(value => <button type="button" key={value} aria-pressed={value === slot} onClick={() => { setSlot(value); setSubmitError(""); }}><Icon name={value === slot ? "check" : "clock"} />{formatTime(value)}</button>)}</div></fieldset> : <div className="bk-time-empty"><Icon name="clock" /><strong>{c.chooseTime}</strong><p>{c.chooseDay}</p><span>{t.minutes} · Zoom</span></div>)}</div>
       {slot && <div className="bk-selected-summary"><span>{c.selected}</span><strong>{formatFull(slot)}</strong>{t.minutes} · Zoom · {t.free}<br />{timeZone}</div>}
       {submitError && <p className="bk-error" role="alert">{submitError}</p>}
-      {uncertain ? <a className="bk-primary" href={helpLink} target="_blank" rel="noreferrer">{t.help}<Icon name="arrow" /></a> : <button type="button" className="bk-primary bk-calendar-submit" disabled={!slot || submitting || data.status !== "ready"} onClick={reserve}><Icon name="calendar" /><span>{submitting ? c.confirming : data.demo ? (lang === "pt" ? "Testar meu agendamento" : "Preview my booking") : c.confirm}</span><Icon name="check" /></button>}
-      <p className="bk-privacy">{data.demo ? (lang === "pt" ? "Demonstração local · sem e-mail ou reunião Zoom." : "Local preview · no email or Zoom meeting.") : c.emailNote}</p><button type="button" className="bk-back" onClick={onBack} disabled={submitting || uncertain}>← {t.back}</button>
+      {uncertain ? <a className="bk-primary" href={helpLink} target="_blank" rel="noreferrer">{t.help}<Icon name="arrow" /></a> : <button type="button" className="bk-primary bk-calendar-submit" disabled={!slot || submitting || data.status !== "ready"} onClick={reserve}><Icon name="calendar" /><span>{submitting ? c.confirming : (lang === "pt" ? "Continuar com este horário" : "Continue with this time")}</span><Icon name="check" /></button>}
+      <p className="bk-privacy">{data.demo ? (lang === "pt" ? "Demonstração local · sem e-mail ou reunião Zoom." : "Local preview · no email or Zoom meeting.") : c.emailNote}</p>
+    </>}
     </>}
   </div>;
 }

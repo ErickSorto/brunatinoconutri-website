@@ -4,8 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { copy, pathways, type Audience, type Lang } from "./copy";
-import LiveCalendar from "./LiveCalendar";
+import LiveCalendar, { type TimeSelection } from "./LiveCalendar";
+import ClientReviews from "./ClientReviews";
+import USVideoStories from "./USVideoStories";
 import { Icon } from "./Icon";
+import { scrollVideoIntoView } from "./scrollVideoIntoView";
 
 export type ConsultationDetails = { name: string; email: string; phone: string; language: Lang; goals: number[] };
 
@@ -17,24 +20,25 @@ function TrustNotes({ lang }: { lang: Lang }) {
   return <div className="bk-trust-notes"><span><Icon name="check" /><strong>CRN 20101459</strong></span><span><Icon name="globe" />{lang === "pt" ? "Português & English" : "English & Portuguese"}</span><span><Icon name="heart" />{lang === "pt" ? "Cuidado individual" : "One-to-one care"}</span></div>;
 }
 
-function ProofVideo({ lang }: { lang: Lang }) {
+function ProofVideo({ lang, english }: { lang: Lang; english: boolean }) {
   const t = copy[lang];
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState(false);
-  return <div className="bk-proof-media">
-    <video ref={video} controls={playing} playsInline preload="none" poster={`/generated/client-proof/still-not-convinced-${lang}-cover.webp`} aria-label={t.proofLabel} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => setError(true)}>
-      <source src="/instagram/bruna-client-proof-dxsd.mp4" type="video/mp4" />
+  return <div className={`bk-proof-media${english ? " bk-proof-english" : ""}`}>
+    <video ref={video} controls={playing} playsInline preload="none" poster={english ? "/generated/booking/heather-english-cover.webp" : `/generated/client-proof/still-not-convinced-${lang}-cover.webp`} aria-label={t.proofLabel} onPlay={event => { setPlaying(true); scrollVideoIntoView(event.currentTarget); }} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => setError(true)}>
+      <source src={english ? "/instagram/bruna-heather-english.mp4" : "/instagram/bruna-client-proof-dxsd.mp4"} type="video/mp4" />
     </video>
     {!playing && !error && <button type="button" className="bk-play" aria-label={t.play} onClick={() => { video.current?.play().catch(() => setError(true)); }}><span aria-hidden="true">▶</span><span>{lang === "pt" ? "Ouça essa história" : "Hear her story"}</span></button>}
-    {error && <a className="bk-video-error" href="https://www.instagram.com/p/DXSDviKiT2A/" target="_blank" rel="noreferrer">{t.videoError}</a>}
-    <span className="bk-video-language">{t.proofLang}</span>
+    {error && <a className="bk-video-error" href={english ? "https://www.instagram.com/p/Ca-_QXkAy91/" : "https://www.instagram.com/p/DXSDviKiT2A/"} target="_blank" rel="noreferrer">{t.videoError}</a>}
+    <span className="bk-video-language">{english ? (lang === "en" ? "Client story · In English" : "Depoimento em inglês") : t.proofLang}</span>
   </div>;
 }
 
 export default function BookingExperience({ initialLang }: { initialLang: Lang }) {
   const [lang, setLang] = useState<Lang>(initialLang);
   const [step, setStep] = useState(0);
+  const [selection, setSelection] = useState<TimeSelection | null>(null);
   const [audience, setAudience] = useState<Audience>("brazil-us");
   const [details, setDetails] = useState<ConsultationDetails>({ name: "", email: "", phone: "", language: initialLang, goals: [] });
   const [formError, setFormError] = useState(false);
@@ -67,13 +71,13 @@ export default function BookingExperience({ initialLang }: { initialLang: Lang }
     setStep(1);
   }
 
-  const detailsReady = details.name.trim().length > 0 && details.name.length <= 100 && details.email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(details.email.trim()) && /^[+()\d\s.-]{7,30}$/.test(details.phone.trim()) && details.phone.replace(/\D/g, "").length >= 7;
+  const detailsReady = details.name.trim().length > 0 && details.name.length <= 100 && details.email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(details.email.trim()) && (!details.phone.trim() || (/^[+()\d\s.-]{7,30}$/.test(details.phone.trim()) && details.phone.replace(/\D/g, "").length >= 7));
 
-  function submitDetails(event: FormEvent<HTMLFormElement>) {
+  function submitDetails(event: FormEvent<HTMLFormElement>, confirm: () => void) {
     event.preventDefault();
     if (!detailsReady) { setFormError(true); return; }
     setFormError(false);
-    setStep(3);
+    confirm();
   }
 
   const helpLink = `https://wa.me/5522999595715?text=${encodeURIComponent(lang === "pt" ? "Olá, Bruna! Gostaria de saber mais sobre a consulta gratuita de 1 hora." : "Hi Bruna! I’d like to learn more about your free one-hour consultation in English.")}`;
@@ -88,7 +92,7 @@ export default function BookingExperience({ initialLang }: { initialLang: Lang }
 
     <nav className="bk-progress" aria-label={t.progress} data-step={step}>
       <div className="bk-journey-track" aria-hidden="true"><span style={{width: `${step / 3 * 100}%`}} /></div>
-      {t.steps.map((label, index) => <button type="button" key={index} disabled={index > step || booked || locked} aria-current={step === index ? "step" : undefined} onClick={() => setStep(index)} className={index < step ? "is-complete" : ""}><span>{index < step ? <Icon name="check" /> : <Icon name={(["leaf", "heart", "message", "calendar"] as const)[index]} />}</span><span>{label}</span></button>)}
+      {t.steps.map((label, index) => <button type="button" key={index} disabled={index > step || booked || locked} aria-current={step === index ? "step" : undefined} onClick={() => setStep(index)} className={index < step ? "is-complete" : ""}><span>{index < step ? <Icon name="check" /> : <Icon name={(["leaf", "heart", "calendar", "message"] as const)[index]} />}</span><span>{label}</span></button>)}
     </nav>
 
     <main key={step} id="booking-content" className={`bk-main bk-step-${step}`}>
@@ -125,7 +129,8 @@ export default function BookingExperience({ initialLang }: { initialLang: Lang }
           <div className="bk-welcome-art"><div className="bk-welcome-food" aria-hidden="true"><Image src="/generated/booking/healthy-food-burst.webp" alt="" fill sizes="(max-width: 760px) 350px, 650px" preload /></div><span className="bk-sixty-stamp"><strong>60</strong><span>{lang === "pt" ? "minutos · grátis" : "minutes · free"}</span></span><Image src="/generated/booking/bruna-welcome-cutout.webp" alt={lang === "pt" ? "Bruna recebe você para uma conversa" : "Bruna welcomes you to a conversation"} width={800} height={1200} sizes="(max-width: 620px) 220px, 480px" preload /><span className="bk-welcome-sign">{lang === "pt" ? "Te espero aqui!" : "See you here!"}<small>Bruna Tinoco</small></span></div>
           <div className="bk-experience-bottom"><span><Icon name="video" />{lang === "pt" ? "Online, pelo Zoom" : "Online, on Zoom"}</span><span><Icon name="heart" />{lang === "pt" ? "Você + Bruna" : "You + Bruna"}</span><span><Icon name="check" />{lang === "pt" ? "100% gratuita" : "Completely free"}</span></div>
         </section>
-        <div className="bk-proof-band"><section className="bk-proof-story"><aside className="bk-proof" aria-label={t.proofLabel}><ProofVideo lang={lang} /><a className="bk-source" href="https://www.instagram.com/p/DXSDviKiT2A/" target="_blank" rel="noreferrer">{t.proofSource}<Icon name="video" /></a></aside><div className="bk-proof-story-copy"><p className="bk-eyebrow">{t.proofKicker}</p><h2>{t.proofTitle}</h2><p>{lang === "pt" ? "Um cuidado próximo faz diferença. Ouça de quem já viveu essa experiência." : "Personal support makes a difference. Hear a client share her own experience."}</p><TrustNotes lang={lang} /><button type="button" className="bk-primary" onClick={() => setStep(2)}><Icon name="calendar" /><span>{t.start}</span><Icon name="arrow" /></button></div></section></div>
+        {audience === "brazil-us" ? <USVideoStories lang={lang} onBook={() => setStep(2)} /> : <div className="bk-proof-band"><section className="bk-proof-story"><aside className="bk-proof" aria-label={t.proofLabel}><ProofVideo key={audience} lang={lang} english={audience === "international"} /><a className="bk-source" href={audience === "international" ? "https://www.instagram.com/p/Ca-_QXkAy91/" : "https://www.instagram.com/p/DXSDviKiT2A/"} target="_blank" rel="noreferrer">{t.proofSource}<Icon name="video" /></a></aside><div className="bk-proof-story-copy"><p className="bk-eyebrow">{t.proofKicker}</p><h2>{audience === "international" ? (lang === "en" ? "Real support. In her own words." : "Cuidado de verdade. Nas palavras dela.") : t.proofTitle}</h2><p>{lang === "pt" ? "Um cuidado próximo faz diferença. Ouça de quem já viveu essa experiência." : audience === "international" ? "Meet Heather, from Louisiana. Hear her share what working with Bruna has meant to her." : "Personal support makes a difference. Hear a client share her own experience."}</p><TrustNotes lang={lang} /><button type="button" className="bk-primary" onClick={() => setStep(2)}><Icon name="calendar" /><span>{t.start}</span><Icon name="arrow" /></button></div></section></div>}
+        <ClientReviews lang={lang} />
         <section className="bk-included bk-food-support"><Image className="bk-food-support-photo" src="/generated/booking/bruna-real-food.webp" alt={lang === "pt" ? "Bruna com uma maçã, cercada de frutas e vegetais frescos" : "Bruna holding an apple, surrounded by fresh fruit and vegetables"} width={1000} height={1250} sizes="(max-width: 760px) 90vw, 440px" /><div className="bk-food-support-copy"><div className="bk-section-heading"><p className="bk-eyebrow">{t.includedKicker}</p><h2>{t.includedTitle}</h2></div><div className="bk-feature-row">{path.features.map(([title, text], index) => <article key={title}><Icon name={index === 0 ? "plate" : index === 1 ? "phone" : "whatsapp"} /><h3>{title}</h3><p>{text}</p></article>)}</div><p className="bk-included-note">{audience === "international" ? (lang === "en" ? "Private consultations in English. Continued individual support is available separately." : "Consulta individual em inglês. Acompanhamento contínuo contratado separadamente.") : t.includedNote}</p></div></section>
         <section className="bk-faq"><div><p className="bk-eyebrow">{t.tinyStep}</p><h2>{t.faqTitle}</h2><p>{t.hero.bottom}</p><button type="button" className="bk-primary" onClick={() => setStep(2)}><Icon name="calendar" /><span>{t.start}</span><Icon name="arrow" /></button></div><div className="bk-faq-list">{t.faqs.map(([question, answer]) => <details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></section>
       </div>}
@@ -138,12 +143,12 @@ export default function BookingExperience({ initialLang }: { initialLang: Lang }
           <div className="bk-summary-credential"><Icon name="check" />CRN 20101459<span>·</span>{lang === "pt" ? "Online pelo Zoom" : "Online via Zoom"}</div>
         </aside>
         <div className="bk-booking-panel">
-          {step === 2 && <form id="bk-contact-form" onSubmit={submitDetails} className="bk-details-form"><p className="bk-eyebrow">{t.detailsKicker}</p><h1 ref={heading} tabIndex={-1}>{t.detailsTitle}</h1><p className="bk-lead">{t.detailsText}</p>
+          <LiveCalendar lang={lang} audience={audience} details={details} mode={step === 2 ? "pick" : "details"} initialSelection={selection} detailsReady={detailsReady} onContinue={value => { setSelection(value); setStep(3); }} onBack={() => setStep(2)} onBooked={() => setBooked(true)} onLock={setLocked} renderDetails={confirm => <form id="bk-contact-form" onSubmit={event => submitDetails(event, confirm)} className="bk-details-form"><p className="bk-eyebrow">{t.detailsKicker}</p><h1 ref={heading} tabIndex={-1}>{t.detailsTitle}</h1><p className="bk-lead">{t.detailsText}</p>
             <label htmlFor="bk-name">{t.name}<input id="bk-name" name="name" autoComplete="name" required maxLength={100} placeholder={t.namePlaceholder} value={details.name} onChange={e => setDetails({ ...details, name: e.target.value })} /></label>
             <label htmlFor="bk-email">{t.email}<input id="bk-email" name="email" type="email" autoComplete="email" required maxLength={254} placeholder={t.emailPlaceholder} value={details.email} onChange={e => setDetails({ ...details, email: e.target.value })} /></label>
-            <label htmlFor="bk-phone">{lang === "pt" ? "Telefone / WhatsApp" : "Phone / WhatsApp"}<input id="bk-phone" aria-describedby="bk-phone-hint" name="phone" type="tel" autoComplete="tel" required maxLength={30} placeholder={lang === "pt" ? "+55 (22) 99999-9999" : "+1 (555) 123-4567"} value={details.phone} onChange={e => setDetails({ ...details, phone: e.target.value })} /></label><p id="bk-phone-hint" className="bk-phone-hint">{lang === "pt" ? "Inclua o código do país." : "Include your country code."}</p>
-            <label htmlFor="bk-spoken">{t.spoken}<select id="bk-spoken" value={details.language} onChange={e => setDetails({ ...details, language: e.target.value as Lang })}><option value="pt">{t.portuguese}</option><option value="en">{t.english}</option></select></label>
-            <fieldset className="bk-goals" aria-describedby="bk-goals-hint">
+            <label htmlFor="bk-phone">{lang === "pt" ? "Telefone / WhatsApp (opcional)" : "Phone / WhatsApp (optional)"}<input id="bk-phone" aria-describedby="bk-phone-hint" name="phone" type="tel" autoComplete="tel" maxLength={30} placeholder={lang === "pt" ? "+55 (22) 99999-9999" : "+1 (555) 123-4567"} value={details.phone} onChange={e => setDetails({ ...details, phone: e.target.value })} /></label><p id="bk-phone-hint" className="bk-phone-hint">{lang === "pt" ? "Inclua o código do país." : "Include your country code."}</p>
+            <fieldset className="bk-spoken-toggle"><legend>{t.spoken}</legend><div className="bk-spoken-options">{(["pt", "en"] as const).map(language => <label key={language} className="bk-spoken-option"><input type="radio" name="consultation-language" value={language} checked={details.language === language} onChange={() => setDetails(current => ({ ...current, language }))} /><span className="bk-spoken-flag" aria-hidden="true">{language === "pt" ? "🇧🇷" : "🇺🇸"}</span><span lang={language}>{language === "pt" ? "Português" : "English"}</span><span className="bk-spoken-check" aria-hidden="true"><Icon name="check" /></span></label>)}</div></fieldset>
+            <details className="bk-extra-details"><summary>{lang === "pt" ? "Personalize sua conversa (opcional)" : "Personalize your conversation (optional)"}<Icon name="chevronRight" /></summary><fieldset className="bk-goals" aria-describedby="bk-goals-hint">
               <legend>{t.goal} <small>({t.optional})</small></legend>
               <p id="bk-goals-hint">{lang === "pt" ? "Escolha uma ou mais opções." : "Choose one or more options."}</p>
               <div className="bk-goal-grid">{t.goals.map((goal, index) => <label className="bk-goal-choice" key={goal}>
@@ -151,15 +156,14 @@ export default function BookingExperience({ initialLang }: { initialLang: Lang }
                 <span className="bk-goal-art"><Icon name={(["plate", "basket", "heart", "message"] as const)[index]} /></span>
                 <span className="bk-goal-label">{goal}</span><span className="bk-goal-check"><Icon name="check" /></span>
               </label>)}</div>
-            </fieldset>
-            {formError && <p className="bk-error" role="alert">{t.required}</p>}<div className="bk-form-actions"><button className="bk-back" type="button" onClick={() => setStep(1)}>← {t.back}</button><button className="bk-primary" type="submit"><Icon name="calendar" /><span>{t.detailsCta}</span><Icon name="arrow" /></button></div><p className="bk-privacy">{t.detailsNote}</p>
-          </form>}
-          {step === 3 && <><h1 ref={heading} tabIndex={-1} className="bk-calendar-heading">{t.calendarTitle}</h1><LiveCalendar lang={lang} audience={audience} details={details} onBack={() => setStep(2)} onBooked={() => setBooked(true)} onLock={setLocked} /></>}
+            </fieldset></details>
+            {formError && <p className="bk-error" role="alert">{t.required}</p>}<div className="bk-form-actions"><button className="bk-primary" type="submit"><Icon name="calendar" /><span>{t.detailsCta}</span><Icon name="check" /></button></div><p className="bk-privacy">{t.detailsNote}</p>
+          </form>} />
         </div>
       </section>}
     </main>
     {step === 1 && <div className="bk-mobile-cta"><span>{t.minutes} · {t.free}</span><button type="button" className="bk-primary" onClick={() => setStep(2)}><Icon name="calendar" /><span>{t.start}</span><Icon name="arrow" /></button></div>}
-    {step === 2 && detailsReady && <div className="bk-mobile-cta bk-details-sticky"><span>{t.minutes} · {t.free}</span><button type="submit" form="bk-contact-form" className="bk-primary"><Icon name="calendar" /><span>{t.detailsCta}</span><Icon name="arrow" /></button></div>}
+
     <footer className="bk-footer"><span>© {new Date().getFullYear()} Bruna Tinoco Nutri</span><span><Icon name="leaf" />{t.footer}</span><a href={helpLink} target="_blank" rel="noreferrer"><Icon name="whatsapp" />{t.help}</a></footer>
   </div>;
 }
